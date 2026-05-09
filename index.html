@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GetVit · Integrated Healthcare Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    /* small additions on top of the Tailwind-compiled style.css */
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 9999px; display: inline-block; }
+    .pulse-dot.live { background:#10b981; box-shadow:0 0 0 0 rgba(16,185,129,.7); animation: pulse 1.6s infinite; }
+    .pulse-dot.warn { background:#f59e0b; }
+    .pulse-dot.off  { background:#9ca3af; }
+    @keyframes pulse { 0% { box-shadow:0 0 0 0 rgba(16,185,129,.6);} 70% { box-shadow:0 0 0 10px rgba(16,185,129,0);} 100% { box-shadow:0 0 0 0 rgba(16,185,129,0);} }
+    .hover-lift { transition: transform .15s ease, box-shadow .15s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(2,6,23,.15); }
+    .scroll-fade { mask-image: linear-gradient(to bottom, black 85%, transparent); }
+    .tab-active { background: linear-gradient(180deg,#0ea5e9 0%,#0284c7 100%); color:white; }
+    .ring-soft { box-shadow: inset 0 0 0 1px rgba(15,23,42,.06); }
+    .grid-bg { background-image: radial-gradient(rgba(15,23,42,.06) 1px, transparent 1px); background-size: 18px 18px; }
+    .risk-bar { height: 8px; border-radius: 9999px; background:#e2e8f0; overflow:hidden; }
+    .risk-bar > span { display:block; height:100%; border-radius:9999px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- ===== Top App Bar ===== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-[1400px] mx-auto px-6 py-3 flex items-center gap-6">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center text-white font-bold">GV</div>
+        <div>
+          <div class="font-semibold text-slate-900 leading-tight">GetVit Health</div>
+          <div class="text-xs text-slate-500 leading-tight">Integrated Care Intelligence</div>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-1 ml-4" id="tabs">
+        <button data-tab="patient"   class="px-4 py-2 text-sm rounded-lg tab-active">Patient · Wearables</button>
+        <button data-tab="hie"       class="px-4 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">EHR / HIE</button>
+        <button data-tab="models"    class="px-4 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">Population Models</button>
+      </nav>
+
+      <div class="ml-auto flex items-center gap-3">
+        <div class="relative hidden lg:block">
+          <input type="text" placeholder="Search patient, MRN, cohort…" class="pl-9 pr-3 py-2 text-sm rounded-lg bg-slate-100 border border-transparent focus:bg-white focus:border-slate-300 outline-none w-72" />
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
+        </div>
+        <button class="relative px-3 py-2 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">🔔<span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">3</span></button>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-semibold">DR</div>
+          <div class="hidden md:block text-sm leading-tight">
+            <div class="font-medium text-slate-900">Dr. R. Patel</div>
+            <div class="text-xs text-slate-500">Provider · Valley Cross Health</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[1400px] mx-auto px-6 py-6">
+
+    <!-- =================================================== -->
+    <!-- ============== TAB 1 · PATIENT VIEW ================ -->
+    <!-- =================================================== -->
+    <section data-panel="patient">
+      <!-- Patient header -->
+      <div class="flex flex-wrap items-center gap-4 mb-6">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg">MA</div>
+          <div>
+            <div class="text-xl font-semibold text-slate-900">Maria Alvarez <span class="ml-2 text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">CHF · NYHA II</span></div>
+            <div class="text-sm text-slate-500">DOB 1962-03-14 · MRN VC-44218 · PCP Dr. Patel · Last visit 2026-04-22</div>
+          </div>
+        </div>
+        <div class="ml-auto flex items-center gap-2">
+          <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200 hover:bg-slate-50">📥 Export PDF</button>
+          <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200 hover:bg-slate-50">🗓 Schedule visit</button>
+          <button id="shareBtn" class="px-3 py-2 text-sm rounded-lg bg-sky-600 hover:bg-sky-700 text-white">🔗 Share dashboard</button>
+        </div>
+      </div>
+
+      <!-- Connected devices -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">⌚</div><div class="font-medium">Fitbit Charge 6</div></div>
+            <span class="pulse-dot live" title="syncing"></span>
+          </div>
+          <div class="mt-2 text-xs text-slate-500">Last sync · 2 min ago</div>
+          <div class="mt-1 text-xs text-emerald-600">HR · Sleep · SpO₂ · Steps</div>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center">🍎</div><div class="font-medium">Apple Health</div></div>
+            <span class="pulse-dot live"></span>
+          </div>
+          <div class="mt-2 text-xs text-slate-500">Last sync · 14 min ago</div>
+          <div class="mt-1 text-xs text-emerald-600">ECG · HRV · Activity · Falls</div>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center">🏃</div><div class="font-medium">Garmin Venu 3</div></div>
+            <span class="pulse-dot warn" title="auth refresh"></span>
+          </div>
+          <div class="mt-2 text-xs text-slate-500">Token refresh needed</div>
+          <div class="mt-1 text-xs text-amber-600">Reconnect required</div>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">📱</div><div class="font-medium">Samsung Health</div></div>
+            <span class="pulse-dot live"></span>
+          </div>
+          <div class="mt-2 text-xs text-slate-500">Last sync · 1 hr ago</div>
+          <div class="mt-1 text-xs text-emerald-600">Weight · BP cuff · Glucose</div>
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        <div class="bg-white rounded-xl p-4 ring-soft">
+          <div class="text-xs text-slate-500">Resting HR (24h avg)</div>
+          <div class="text-2xl font-semibold mt-1 text-slate-900">72 <span class="text-sm font-normal text-slate-500">bpm</span></div>
+          <div class="text-xs text-emerald-600 mt-1">▼ 4 vs 7-day</div>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft">
+          <div class="text-xs text-slate-500">SpO₂ (overnight)</div>
+          <div class="text-2xl font-semibold mt-1 text-slate-900">94% <span class="text-sm font-normal text-slate-500">avg</span></div>
+          <div class="text-xs text-amber-600 mt-1">3 dips below 90%</div>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft">
+          <div class="text-xs text-slate-500">Steps</div>
+          <div class="text-2xl font-semibold mt-1 text-slate-900">4,212</div>
+          <div class="text-xs text-slate-500 mt-1">Goal 5,000</div>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft">
+          <div class="text-xs text-slate-500">Sleep</div>
+          <div class="text-2xl font-semibold mt-1 text-slate-900">6h 18m</div>
+          <div class="text-xs text-rose-600 mt-1">Efficiency 78%</div>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft">
+          <div class="text-xs text-slate-500">Weight (Δ 7d)</div>
+          <div class="text-2xl font-semibold mt-1 text-slate-900">+1.4 <span class="text-sm font-normal text-slate-500">kg</span></div>
+          <div class="text-xs text-rose-600 mt-1">Fluid retention flag</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <div class="lg:col-span-2 bg-white rounded-xl p-5 ring-soft">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <div class="font-semibold text-slate-900">Heart rate · 24-hour</div>
+              <div class="text-xs text-slate-500">Continuous from Fitbit + Apple Health · merged stream</div>
+            </div>
+            <div class="flex gap-1">
+              <button class="px-2 py-1 text-xs rounded bg-slate-100">24h</button>
+              <button class="px-2 py-1 text-xs rounded text-slate-500 hover:bg-slate-100">7d</button>
+              <button class="px-2 py-1 text-xs rounded text-slate-500 hover:bg-slate-100">30d</button>
+            </div>
+          </div>
+          <canvas id="hrChart" height="120"></canvas>
+        </div>
+        <div class="bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900">Sleep stages · last night</div>
+          <div class="text-xs text-slate-500 mb-3">Apple Health</div>
+          <canvas id="sleepChart" height="180"></canvas>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900">SpO₂ overnight</div>
+          <div class="text-xs text-slate-500 mb-3">Fitbit Charge 6</div>
+          <canvas id="spo2Chart" height="160"></canvas>
+        </div>
+        <div class="bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900">Daily steps · 14d</div>
+          <div class="text-xs text-slate-500 mb-3">Apple Health · merged</div>
+          <canvas id="stepsChart" height="160"></canvas>
+        </div>
+        <div class="bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900">Weight + BP · trend</div>
+          <div class="text-xs text-slate-500 mb-3">Samsung Health · scale + cuff</div>
+          <canvas id="weightChart" height="160"></canvas>
+        </div>
+      </div>
+
+      <!-- AI insights & share -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 bg-gradient-to-br from-sky-50 to-cyan-50 border border-sky-100 rounded-xl p-5">
+          <div class="flex items-center gap-2 mb-2"><span class="text-sky-600">✨</span><div class="font-semibold text-slate-900">GetVit AI · daily insights</div></div>
+          <ul class="space-y-2 text-sm text-slate-700">
+            <li class="flex gap-2"><span class="text-amber-600">●</span> Weight up 1.4 kg over 7 days with reduced step count — early CHF decompensation pattern (similar to flag from 2025-11).</li>
+            <li class="flex gap-2"><span class="text-rose-600">●</span> 3 nocturnal SpO₂ dips below 90% in the last 7 nights. Recommend pulmonology review.</li>
+            <li class="flex gap-2"><span class="text-emerald-600">●</span> Adherence to ACE-inhibitor refill on schedule (Epic MedReconcile).</li>
+            <li class="flex gap-2"><span class="text-sky-600">●</span> Patient-reported symptom: mild ankle swelling logged via app on May 7.</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900 mb-1">Shareable view</div>
+          <div class="text-xs text-slate-500 mb-3">Patient can share a read-only snapshot with family or specialists.</div>
+          <div class="flex items-center gap-2 mb-3">
+            <input id="shareLink" readonly value="https://getvit.health/p/MA-44218?token=•••" class="flex-1 px-3 py-2 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono" />
+            <button onclick="copyShare()" class="px-3 py-2 text-xs rounded-lg bg-slate-900 text-white hover:bg-slate-700">Copy</button>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <label class="flex items-center gap-2"><input type="checkbox" checked /> Vitals</label>
+            <label class="flex items-center gap-2"><input type="checkbox" checked /> Sleep</label>
+            <label class="flex items-center gap-2"><input type="checkbox" /> Medications</label>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">Expires in 7 days · HIPAA-compliant viewer</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- ============== TAB 2 · EHR / HIE ==================== -->
+    <!-- =================================================== -->
+    <section data-panel="hie" class="hidden">
+      <div class="flex items-center gap-3 mb-6">
+        <div>
+          <div class="text-xl font-semibold text-slate-900">Health Information Exchange</div>
+          <div class="text-sm text-slate-500">Bi-directional FHIR R4 · HL7 v2 · CDA · Direct Trust</div>
+        </div>
+        <div class="ml-auto flex gap-2">
+          <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200">⚙ Endpoint settings</button>
+          <button class="px-3 py-2 text-sm rounded-lg bg-sky-600 text-white hover:bg-sky-700">+ Add EHR connection</button>
+        </div>
+      </div>
+
+      <!-- Connection summary -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div class="bg-white rounded-xl p-4 ring-soft"><div class="text-xs text-slate-500">Connected systems</div><div class="text-2xl font-semibold mt-1">7</div><div class="text-xs text-emerald-600">All healthy</div></div>
+        <div class="bg-white rounded-xl p-4 ring-soft"><div class="text-xs text-slate-500">Patients linked</div><div class="text-2xl font-semibold mt-1">42,318</div><div class="text-xs text-slate-500">+812 this week</div></div>
+        <div class="bg-white rounded-xl p-4 ring-soft"><div class="text-xs text-slate-500">FHIR calls · 24h</div><div class="text-2xl font-semibold mt-1">186,402</div><div class="text-xs text-emerald-600">99.97% success</div></div>
+        <div class="bg-white rounded-xl p-4 ring-soft"><div class="text-xs text-slate-500">Avg latency</div><div class="text-2xl font-semibold mt-1">312 <span class="text-sm font-normal text-slate-500">ms</span></div><div class="text-xs text-emerald-600">SLA &lt;500ms</div></div>
+      </div>
+
+      <!-- EHR cards grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+        <!-- Epic -->
+        <div class="bg-white rounded-xl p-5 ring-soft hover-lift">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-lg bg-rose-50 flex items-center justify-center font-bold text-rose-600">E</div>
+              <div>
+                <div class="font-semibold text-slate-900">Epic</div>
+                <div class="text-xs text-slate-500">Hyperspace · USCDI v3 · App Orchard</div>
+              </div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">● Connected</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+            <div><div class="text-[11px] text-slate-500">Patients</div><div class="font-semibold">28,104</div></div>
+            <div><div class="text-[11px] text-slate-500">Encounters/d</div><div class="font-semibold">1,212</div></div>
+            <div><div class="text-[11px] text-slate-500">Latency</div><div class="font-semibold">241 ms</div></div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">FHIR R4 · OAuth2 · Last sync 2 min ago</div>
+        </div>
+
+        <!-- eClinicalWorks -->
+        <div class="bg-white rounded-xl p-5 ring-soft hover-lift">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-lg bg-violet-50 flex items-center justify-center font-bold text-violet-600">eC</div>
+              <div>
+                <div class="font-semibold text-slate-900">eClinicalWorks</div>
+                <div class="text-xs text-slate-500">V12 · Healow API · USCDI v3</div>
+              </div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">● Connected</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+            <div><div class="text-[11px] text-slate-500">Patients</div><div class="font-semibold">8,742</div></div>
+            <div><div class="text-[11px] text-slate-500">Encounters/d</div><div class="font-semibold">418</div></div>
+            <div><div class="text-[11px] text-slate-500">Latency</div><div class="font-semibold">388 ms</div></div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">FHIR R4 · Bulk Data · Last sync 4 min ago</div>
+        </div>
+
+        <!-- Cerner / Oracle -->
+        <div class="bg-white rounded-xl p-5 ring-soft hover-lift">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-lg bg-sky-50 flex items-center justify-center font-bold text-sky-600">Or</div>
+              <div>
+                <div class="font-semibold text-slate-900">Oracle Health (Cerner)</div>
+                <div class="text-xs text-slate-500">PowerChart · Millennium</div>
+              </div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">● Connected</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+            <div><div class="text-[11px] text-slate-500">Patients</div><div class="font-semibold">3,118</div></div>
+            <div><div class="text-[11px] text-slate-500">Encounters/d</div><div class="font-semibold">142</div></div>
+            <div><div class="text-[11px] text-slate-500">Latency</div><div class="font-semibold">402 ms</div></div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">FHIR R4 · SMART on FHIR · Last sync 11 min ago</div>
+        </div>
+
+        <!-- Athenahealth -->
+        <div class="bg-white rounded-xl p-5 ring-soft hover-lift">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-lg bg-emerald-50 flex items-center justify-center font-bold text-emerald-600">at</div>
+              <div>
+                <div class="font-semibold text-slate-900">athenahealth</div>
+                <div class="text-xs text-slate-500">athenaOne · MDP API</div>
+              </div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">● Connected</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+            <div><div class="text-[11px] text-slate-500">Patients</div><div class="font-semibold">1,402</div></div>
+            <div><div class="text-[11px] text-slate-500">Encounters/d</div><div class="font-semibold">88</div></div>
+            <div><div class="text-[11px] text-slate-500">Latency</div><div class="font-semibold">298 ms</div></div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">FHIR R4 · Last sync 1 min ago</div>
+        </div>
+
+        <!-- Allscripts / Veradigm -->
+        <div class="bg-white rounded-xl p-5 ring-soft hover-lift">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-lg bg-amber-50 flex items-center justify-center font-bold text-amber-600">Vd</div>
+              <div>
+                <div class="font-semibold text-slate-900">Veradigm (Allscripts)</div>
+                <div class="text-xs text-slate-500">Sunrise · TouchWorks</div>
+              </div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-700">● Degraded</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+            <div><div class="text-[11px] text-slate-500">Patients</div><div class="font-semibold">622</div></div>
+            <div><div class="text-[11px] text-slate-500">Encounters/d</div><div class="font-semibold">31</div></div>
+            <div><div class="text-[11px] text-slate-500">Latency</div><div class="font-semibold">812 ms</div></div>
+          </div>
+          <div class="mt-3 text-xs text-amber-700">Retrying queued bundles · 14 in backlog</div>
+        </div>
+
+        <!-- Meditech -->
+        <div class="bg-white rounded-xl p-5 ring-soft hover-lift">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-lg bg-indigo-50 flex items-center justify-center font-bold text-indigo-600">M</div>
+              <div>
+                <div class="font-semibold text-slate-900">MEDITECH Expanse</div>
+                <div class="text-xs text-slate-500">Greenfield API</div>
+              </div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">● Connected</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+            <div><div class="text-[11px] text-slate-500">Patients</div><div class="font-semibold">218</div></div>
+            <div><div class="text-[11px] text-slate-500">Encounters/d</div><div class="font-semibold">9</div></div>
+            <div><div class="text-[11px] text-slate-500">Latency</div><div class="font-semibold">355 ms</div></div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">FHIR R4 · Last sync 8 min ago</div>
+        </div>
+      </div>
+
+      <!-- HIE traffic + recent records -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 bg-white rounded-xl p-5 ring-soft">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <div class="font-semibold text-slate-900">HIE traffic by source · last 24h</div>
+              <div class="text-xs text-slate-500">FHIR resources received per hour</div>
+            </div>
+            <div class="text-xs text-slate-500">Updated live</div>
+          </div>
+          <canvas id="hieChart" height="110"></canvas>
+        </div>
+        <div class="bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900 mb-2">Resource mix · 24h</div>
+          <canvas id="resourceChart" height="160"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl ring-soft mt-6 overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="font-semibold text-slate-900">Incoming records · live feed</div>
+          <div class="text-xs text-slate-500">CCD / FHIR Bundle</div>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
+            <tr><th class="text-left px-5 py-2">Time</th><th class="text-left px-5 py-2">Source</th><th class="text-left px-5 py-2">Patient</th><th class="text-left px-5 py-2">Resource</th><th class="text-left px-5 py-2">Reason</th><th class="text-left px-5 py-2">Status</th></tr>
+          </thead>
+          <tbody id="hieFeed" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- ============== TAB 3 · POPULATION MODELS =========== -->
+    <!-- =================================================== -->
+    <section data-panel="models" class="hidden">
+      <div class="flex items-center gap-3 mb-6">
+        <div>
+          <div class="text-xl font-semibold text-slate-900">Population risk models</div>
+          <div class="text-sm text-slate-500">Trained on 42,318 patients · wearable + EHR · refreshed nightly</div>
+        </div>
+        <div class="ml-auto flex gap-2">
+          <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200">⬇ Download cohort</button>
+          <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200">📊 Model card</button>
+          <button class="px-3 py-2 text-sm rounded-lg bg-sky-600 text-white hover:bg-sky-700">▶ Re-run model</button>
+        </div>
+      </div>
+
+      <!-- Cohort cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="cohortCards"></div>
+
+      <!-- Risk distribution + top features -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <div class="lg:col-span-2 bg-white rounded-xl p-5 ring-soft">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <div class="font-semibold text-slate-900">30-day readmission risk · cohort distribution</div>
+              <div class="text-xs text-slate-500">Selected cohort: <span id="cohortLabel" class="font-medium text-slate-700">CHF</span></div>
+            </div>
+            <div class="flex gap-1" id="cohortToggle">
+              <button data-c="CHF" class="px-2.5 py-1 text-xs rounded bg-sky-600 text-white">CHF</button>
+              <button data-c="COPD" class="px-2.5 py-1 text-xs rounded text-slate-500 hover:bg-slate-100">COPD</button>
+              <button data-c="Pneumonia" class="px-2.5 py-1 text-xs rounded text-slate-500 hover:bg-slate-100">Pneumonia</button>
+              <button data-c="Diabetes" class="px-2.5 py-1 text-xs rounded text-slate-500 hover:bg-slate-100">Diabetes</button>
+            </div>
+          </div>
+          <canvas id="riskChart" height="120"></canvas>
+        </div>
+        <div class="bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900 mb-3">Top model features · <span id="featLabel">CHF</span></div>
+          <ul id="featureList" class="space-y-3 text-sm"></ul>
+          <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500">SHAP values · Model: GV-RiskNet v2.4 · AUC <span id="auc">0.86</span></div>
+        </div>
+      </div>
+
+      <!-- Cohort heatmap + alerts -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 bg-white rounded-xl p-5 ring-soft">
+          <div class="flex items-center justify-between mb-3">
+            <div class="font-semibold text-slate-900">High-risk patient panel</div>
+            <div class="text-xs text-slate-500">Top 10 in <span id="panelLabel">CHF</span> cohort</div>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="text-xs text-slate-500 uppercase border-b border-slate-100"><tr><th class="text-left py-2">Patient</th><th class="text-left">Age</th><th class="text-left">Risk</th><th class="text-left">Δ 7d</th><th class="text-left">Source</th><th class="text-left">Action</th></tr></thead>
+            <tbody id="patientPanel" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+        <div class="bg-gradient-to-br from-rose-50 to-amber-50 border border-rose-100 rounded-xl p-5">
+          <div class="font-semibold text-slate-900 mb-1">Care-team alerts · today</div>
+          <div class="text-xs text-slate-500 mb-3">Auto-generated from cross-source signals</div>
+          <ul class="space-y-3 text-sm">
+            <li class="bg-white rounded-lg p-3 ring-soft">
+              <div class="text-xs text-rose-600 font-semibold">CHF · HIGH</div>
+              <div class="font-medium text-slate-900">Maria Alvarez · +1.4kg / 7d, SpO₂ dips</div>
+              <div class="text-xs text-slate-500 mt-1">Risk score 0.81 · Epic chart open</div>
+            </li>
+            <li class="bg-white rounded-lg p-3 ring-soft">
+              <div class="text-xs text-amber-600 font-semibold">COPD · MED</div>
+              <div class="font-medium text-slate-900">James Okafor · ↓ steps, ↑ resting HR</div>
+              <div class="text-xs text-slate-500 mt-1">Risk 0.62 · eClinicalWorks</div>
+            </li>
+            <li class="bg-white rounded-lg p-3 ring-soft">
+              <div class="text-xs text-amber-600 font-semibold">Pneumonia · MED</div>
+              <div class="font-medium text-slate-900">Linh Tran · fever spikes, low SpO₂</div>
+              <div class="text-xs text-slate-500 mt-1">Risk 0.58 · Athena</div>
+            </li>
+            <li class="bg-white rounded-lg p-3 ring-soft">
+              <div class="text-xs text-emerald-600 font-semibold">Diabetes · LOW</div>
+              <div class="font-medium text-slate-900">Robert Chen · A1c improving 7.8 → 7.1</div>
+              <div class="text-xs text-slate-500 mt-1">Risk 0.22 · Cerner</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-[1400px] mx-auto px-6 py-8 text-xs text-slate-500 flex flex-wrap gap-3 items-center">
+    <span>© 2026 GetVit Health · Demo prototype with synthetic data</span>
+    <span class="ml-auto">FHIR R4 · USCDI v3 · HITRUST · SOC 2 Type II</span>
+  </footer>
+
+  <script>
+    // ===== Tab switching =====
+    const tabs = document.querySelectorAll('#tabs button');
+    const panels = document.querySelectorAll('section[data-panel]');
+    tabs.forEach(b => b.addEventListener('click', () => {
+      tabs.forEach(x => { x.classList.remove('tab-active'); x.classList.add('text-slate-600','hover:bg-slate-100'); });
+      b.classList.add('tab-active'); b.classList.remove('text-slate-600','hover:bg-slate-100');
+      panels.forEach(p => p.classList.toggle('hidden', p.dataset.panel !== b.dataset.tab));
+    }));
+
+    // ===== Share button =====
+    function copyShare(){
+      const i = document.getElementById('shareLink');
+      navigator.clipboard?.writeText(i.value);
+      const o = event.target.textContent;
+      event.target.textContent = 'Copied ✓';
+      setTimeout(() => event.target.textContent = o, 1400);
+    }
+    document.getElementById('shareBtn').addEventListener('click', () => {
+      document.getElementById('shareLink').select();
+    });
+
+    // ===== Helpers =====
+    const rng = (seed => () => (seed = (seed * 9301 + 49297) % 233280) / 233280)(7);
+    const noise = (base, amp) => Array.from({length:24}, (_,i) => Math.round(base + Math.sin(i/3) * amp/2 + (rng()-.5) * amp));
+
+    Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system';
+    Chart.defaults.color = '#475569';
+    Chart.defaults.plugins.legend.display = false;
+
+    // ===== Patient charts =====
+    const hours = Array.from({length:24}, (_,i) => `${String(i).padStart(2,'0')}:00`);
+    new Chart(document.getElementById('hrChart'), {
+      type: 'line',
+      data: { labels: hours, datasets: [{
+        data: noise(72, 18), borderColor:'#0284c7', backgroundColor:'rgba(2,132,199,.08)', fill:true, tension:.35, borderWidth:2, pointRadius:0
+      }] },
+      options: { scales: { y: { suggestedMin:50, suggestedMax:110 } } }
+    });
+
+    new Chart(document.getElementById('sleepChart'), {
+      type: 'doughnut',
+      data: { labels:['Deep','REM','Light','Awake'], datasets:[{ data:[78,62,182,16], backgroundColor:['#0f766e','#0ea5e9','#60a5fa','#f59e0b'], borderWidth:0 }] },
+      options: { plugins: { legend: { display:true, position:'bottom', labels:{ boxWidth:10 } } }, cutout:'62%' }
+    });
+
+    new Chart(document.getElementById('spo2Chart'), {
+      type: 'line',
+      data: { labels: Array.from({length:32}, (_,i) => `${i*15}m`), datasets:[{
+        data: Array.from({length:32}, (_,i) => 96 - (Math.sin(i/4)*1.5) - (i>14&&i<19?4:0) + (rng()-.5)*0.6),
+        borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)', fill:true, tension:.4, borderWidth:2, pointRadius:0
+      }] },
+      options: { scales: { y: { suggestedMin:86, suggestedMax:100 } } }
+    });
+
+    new Chart(document.getElementById('stepsChart'), {
+      type: 'bar',
+      data: { labels: Array.from({length:14}, (_,i) => `D${i+1}`), datasets:[{
+        data: [4800,5200,3900,6100,5500,4200,3100,2800,3900,4500,5100,4700,4400,4212],
+        backgroundColor:'#10b981', borderRadius:6
+      }] },
+      options: { scales: { y: { beginAtZero:true } } }
+    });
+
+    new Chart(document.getElementById('weightChart'), {
+      type: 'line',
+      data: { labels: Array.from({length:14}, (_,i) => `D${i+1}`), datasets: [
+        { label:'Weight kg', data:[72.1,72.0,72.3,72.4,72.6,72.8,73.0,73.2,73.4,73.5,73.6,73.4,73.5,73.5], borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,.08)', fill:true, tension:.3, borderWidth:2, pointRadius:0, yAxisID:'y' },
+        { label:'Sys BP',    data:[128,130,131,133,135,134,136,138,140,139,141,140,142,141], borderColor:'#0ea5e9', tension:.3, borderWidth:2, pointRadius:0, yAxisID:'y1' }
+      ] },
+      options: { plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10 } } }, scales: { y:{ position:'left' }, y1:{ position:'right', grid:{ display:false } } } }
+    });
+
+    // ===== HIE charts =====
+    new Chart(document.getElementById('hieChart'), {
+      type: 'line',
+      data: { labels: hours, datasets: [
+        { label:'Epic',         data: noise(820, 240), borderColor:'#dc2626', tension:.3, borderWidth:2, pointRadius:0 },
+        { label:'eClinicalWorks',data: noise(310, 90),  borderColor:'#7c3aed', tension:.3, borderWidth:2, pointRadius:0 },
+        { label:'Cerner',        data: noise(180, 60),  borderColor:'#0ea5e9', tension:.3, borderWidth:2, pointRadius:0 },
+        { label:'Athena',        data: noise(110, 50),  borderColor:'#10b981', tension:.3, borderWidth:2, pointRadius:0 }
+      ] },
+      options: { plugins: { legend: { display:true, position:'bottom', labels:{ boxWidth:10 } } } }
+    });
+
+    new Chart(document.getElementById('resourceChart'), {
+      type: 'polarArea',
+      data: { labels:['Observation','Encounter','MedicationRequest','Condition','Procedure','DiagnosticReport'],
+              datasets:[{ data:[42,18,12,11,9,8], backgroundColor:['#0ea5e9','#10b981','#f59e0b','#dc2626','#7c3aed','#0f766e'], borderWidth:0 }] },
+      options: { plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10, font:{ size:10 } } } } }
+    });
+
+    // ===== HIE live feed =====
+    const feedRows = [
+      ['10:24:11','Epic','Maria Alvarez','Observation · Body Weight','RPM upload','✓ stored'],
+      ['10:23:48','eClinicalWorks','James Okafor','MedicationRequest','Refill','✓ stored'],
+      ['10:23:15','Athena','Linh Tran','DiagnosticReport · CXR','Pneumonia r/o','✓ stored'],
+      ['10:22:50','Cerner','Robert Chen','Observation · HbA1c','Lab result','✓ stored'],
+      ['10:22:14','Epic','Sarah Goldberg','Encounter','Tele-visit close','✓ stored'],
+      ['10:21:39','Veradigm','Anita Bose','Bundle','Retry queued','⟳ retrying'],
+      ['10:21:02','Epic','Maria Alvarez','Condition','I50.32 added','✓ stored'],
+      ['10:20:47','MEDITECH','Carl Weber','Procedure','Spirometry','✓ stored']
+    ];
+    const tbody = document.getElementById('hieFeed');
+    tbody.innerHTML = feedRows.map(r => `<tr class="hover:bg-slate-50">
+      <td class="px-5 py-2 font-mono text-xs text-slate-500">${r[0]}</td>
+      <td class="px-5 py-2">${r[1]}</td><td class="px-5 py-2">${r[2]}</td>
+      <td class="px-5 py-2">${r[3]}</td><td class="px-5 py-2 text-slate-500">${r[4]}</td>
+      <td class="px-5 py-2"><span class="text-xs px-2 py-0.5 rounded-full ${r[5].includes('retry')?'bg-amber-50 text-amber-700':'bg-emerald-50 text-emerald-700'}">${r[5]}</span></td>
+    </tr>`).join('');
+
+    // ===== Population Models =====
+    const cohorts = {
+      CHF:       { color:'#dc2626', size:1842, readmit:21.4, auc:0.86, alerts:48,
+        features:[['7-day weight gain >2kg',0.27],['Resting HR trend',0.19],['NT-proBNP last',0.17],['Steps/day Δ',0.12],['SpO₂ nocturnal dips',0.10],['Loop diuretic adherence',0.08]],
+        risk:[180,260,420,540,310,132] },
+      COPD:      { color:'#0ea5e9', size:1218, readmit:18.7, auc:0.82, alerts:31,
+        features:[['Inhaler adherence',0.24],['SpO₂ <92% events',0.21],['Resting HR variability',0.15],['Exacerbation history',0.14],['Air quality exposure',0.10],['Step decline',0.08]],
+        risk:[210,300,380,200,98,30] },
+      Pneumonia: { color:'#7c3aed', size:642, readmit:15.2, auc:0.79, alerts:14,
+        features:[['Fever curve',0.26],['SpO₂ trend',0.22],['Procalcitonin',0.18],['Resp rate (wearable)',0.14],['Age',0.10],['CCI score',0.08]],
+        risk:[160,210,160,80,24,8] },
+      Diabetes:  { color:'#10b981', size:5108, readmit:9.4, auc:0.84, alerts:62,
+        features:[['HbA1c trajectory',0.25],['CGM time-in-range',0.22],['Meds adherence',0.18],['BMI Δ',0.14],['Steps/day',0.11],['Sleep duration',0.08]],
+        risk:[1300,1480,1220,720,310,78] }
+    };
+
+    // Cohort cards
+    const cardsEl = document.getElementById('cohortCards');
+    cardsEl.innerHTML = Object.entries(cohorts).map(([name, c]) => `
+      <div class="bg-white rounded-xl p-5 ring-soft hover-lift">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold text-slate-900">${name}</div>
+          <span class="text-xs px-2 py-0.5 rounded-full" style="background:${c.color}1a;color:${c.color}">AUC ${c.auc}</span>
+        </div>
+        <div class="mt-3 flex items-end justify-between">
+          <div>
+            <div class="text-3xl font-semibold">${c.size.toLocaleString()}</div>
+            <div class="text-xs text-slate-500">patients in cohort</div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-semibold" style="color:${c.color}">${c.readmit}%</div>
+            <div class="text-[11px] text-slate-500">30-d readmit</div>
+          </div>
+        </div>
+        <div class="mt-3 risk-bar"><span style="width:${Math.min(100, c.readmit*4)}%;background:${c.color}"></span></div>
+        <div class="mt-3 text-xs text-slate-500">${c.alerts} active alerts · model GV-RiskNet v2.4</div>
+      </div>
+    `).join('');
+
+    // Risk distribution chart
+    const riskCtx = document.getElementById('riskChart');
+    const riskChart = new Chart(riskCtx, {
+      type:'bar',
+      data: { labels:['0–10%','10–25%','25–40%','40–60%','60–80%','80–100%'],
+              datasets:[{ data:cohorts.CHF.risk, backgroundColor:cohorts.CHF.color, borderRadius:6 }] },
+      options: { scales:{ y:{ beginAtZero:true } } }
+    });
+
+    function setCohort(name){
+      const c = cohorts[name];
+      document.getElementById('cohortLabel').textContent = name;
+      document.getElementById('featLabel').textContent = name;
+      document.getElementById('panelLabel').textContent = name;
+      document.getElementById('auc').textContent = c.auc;
+      riskChart.data.datasets[0].data = c.risk;
+      riskChart.data.datasets[0].backgroundColor = c.color;
+      riskChart.update();
+      document.getElementById('featureList').innerHTML = c.features.map(f =>
+        `<li><div class="flex justify-between text-xs"><span>${f[0]}</span><span class="text-slate-500">${(f[1]*100).toFixed(0)}%</span></div>
+         <div class="risk-bar mt-1"><span style="width:${f[1]*100*3}%;background:${c.color}"></span></div></li>`
+      ).join('');
+      // patient panel synthetic
+      const fakeNames = ['M. Alvarez','J. Okafor','L. Tran','R. Chen','S. Goldberg','A. Bose','C. Weber','P. Singh','E. Nakamura','D. Hassan'];
+      const sources = ['Epic','eClinicalWorks','Athena','Cerner','MEDITECH'];
+      document.getElementById('patientPanel').innerHTML = fakeNames.map((n,i) => {
+        const r = (0.92 - i*0.04).toFixed(2);
+        const d = ((rng()-.5)*0.1).toFixed(2);
+        return `<tr class="hover:bg-slate-50">
+          <td class="py-2 font-medium text-slate-900">${n}</td>
+          <td>${55 + Math.floor(rng()*30)}</td>
+          <td><div class="flex items-center gap-2"><span class="font-semibold" style="color:${c.color}">${r}</span><div class="risk-bar w-20"><span style="width:${r*100}%;background:${c.color}"></span></div></div></td>
+          <td class="${d>=0?'text-rose-600':'text-emerald-600'}">${d>=0?'+'+d:d}</td>
+          <td class="text-slate-500">${sources[i % sources.length]}</td>
+          <td><button class="text-xs px-2 py-1 rounded bg-slate-900 text-white hover:bg-slate-700">Open chart</button></td>
+        </tr>`;
+      }).join('');
+    }
+    setCohort('CHF');
+
+    document.querySelectorAll('#cohortToggle button').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('#cohortToggle button').forEach(x => { x.classList.remove('bg-sky-600','text-white'); x.classList.add('text-slate-500','hover:bg-slate-100'); });
+      b.classList.add('bg-sky-600','text-white'); b.classList.remove('text-slate-500','hover:bg-slate-100');
+      setCohort(b.dataset.c);
+    }));
+  </script>
+</body>
+</html>
