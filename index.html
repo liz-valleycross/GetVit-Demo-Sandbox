@@ -33,6 +33,10 @@
     .role-pill { background:#f3f4f6; padding:3px; border-radius:10px; display:inline-flex; gap:2px; }
     .role-pill button { padding:6px 12px; border-radius:8px; font-size:13px; color:#6b7280; }
     .role-pill button.on { background:#fff; color:#7c3aed; box-shadow:0 1px 2px rgba(0,0,0,.06); font-weight:500; }
+    /* Sticky sidebar + correct anchor offsets */
+    aside.sticky-side { position: sticky; top: 57px; align-self: flex-start; height: calc(100vh - 57px); overflow-y: auto; }
+    [id^="sec-"], section[data-panel] { scroll-margin-top: 80px; }
+    .lookup-result:hover { background:#f5f3ff; }
     .hover-lift { transition: transform .15s ease, box-shadow .15s ease; }
     .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(15,23,42,.12); }
     .risk-bar { height: 6px; border-radius: 9999px; background:#eef0f4; overflow:hidden; }
@@ -68,14 +72,14 @@
           <button data-role="provider">Provider</button>
         </div>
         <span class="text-xs text-slate-500 hidden lg:inline">LOGGED IN | Loading: <span class="text-slate-700 font-medium">NO</span></span>
-        <div id="userAvatar" class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-sm font-semibold">EI</div>
+        <div id="userAvatar" class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-sm font-semibold">ET</div>
       </div>
     </div>
   </header>
 
   <div class="flex min-h-[calc(100vh-57px)]">
     <!-- ===== Sidebar ===== -->
-    <aside class="w-60 bg-white border-r border-slate-200 hidden md:block">
+    <aside class="sticky-side w-60 bg-white border-r border-slate-200 hidden md:block">
       <!-- Patient sidebar -->
       <nav data-role="patient" class="p-3">
         <div class="side-section">Overview</div>
@@ -352,12 +356,16 @@
           <div id="sec-lookup" class="card p-5 mb-6">
             <div class="flex flex-wrap items-center gap-3">
               <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Patient lookup</span>
-              <input type="text" placeholder="Search by name, MRN, DOB…" class="flex-1 min-w-[220px] px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200 outline-none" />
-              <select class="px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200">
+              <div class="relative flex-1 min-w-[220px]">
+                <input id="lookupInput" type="text" autocomplete="off" placeholder="Search by name, MRN, DOB…" class="w-full px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200 outline-none" />
+                <div id="lookupResults" class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-20 max-h-72 overflow-y-auto"></div>
+              </div>
+              <select id="lookupSource" class="px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200">
                 <option>All EHR sources</option><option>Epic</option><option>eClinicalWorks</option><option>Cerner</option><option>athenahealth</option>
               </select>
-              <button class="btn-primary px-3 py-2 rounded-lg text-sm">Pull chart →</button>
+              <button id="lookupGo" class="btn-primary px-3 py-2 rounded-lg text-sm">Pull chart →</button>
             </div>
+            <div class="mt-3 text-xs text-slate-500">Recently viewed: <button class="text-violet-600 hover:underline" data-pull="elizabeth-trader">Elizabeth Trader</button> · <button class="text-violet-600 hover:underline" data-pull="maria-alvarez">Maria Alvarez</button> · <button class="text-violet-600 hover:underline" data-pull="james-okafor">James Okafor</button></div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
@@ -407,13 +415,162 @@
             <table class="w-full text-sm">
               <thead class="text-xs text-slate-500 uppercase border-b border-slate-100"><tr><th class="text-left py-2">Patient</th><th class="text-left">Cohort</th><th class="text-left">Risk</th><th class="text-left">Signal</th><th class="text-left">Source</th><th></th></tr></thead>
               <tbody class="divide-y divide-slate-100">
-                <tr><td class="py-2 font-medium">Maria Alvarez</td><td>CHF</td><td class="font-semibold text-rose-600">0.81</td><td>+1.4 kg / 7d, SpO₂ dips</td><td class="text-slate-500">Epic</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded">Open chart</button></td></tr>
-                <tr><td class="py-2 font-medium">James Okafor</td><td>COPD</td><td class="font-semibold text-amber-600">0.62</td><td>↓ steps, ↑ resting HR</td><td class="text-slate-500">eCW</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded">Open chart</button></td></tr>
-                <tr><td class="py-2 font-medium">Linh Tran</td><td>Pneumonia</td><td class="font-semibold text-amber-600">0.58</td><td>fever spikes, low SpO₂</td><td class="text-slate-500">Athena</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded">Open chart</button></td></tr>
-                <tr><td class="py-2 font-medium">Robert Chen</td><td>Diabetes</td><td class="font-semibold text-emerald-600">0.22</td><td>A1c 7.8 → 7.1</td><td class="text-slate-500">Cerner</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded">Open chart</button></td></tr>
+                <tr><td class="py-2 font-medium">Elizabeth Trader</td><td>CHF</td><td class="font-semibold text-rose-600">0.81</td><td>+1.4 kg / 7d, SpO₂ dips</td><td class="text-slate-500">Epic</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded" data-pull="elizabeth-trader">Open chart</button></td></tr>
+                <tr><td class="py-2 font-medium">Maria Alvarez</td><td>CHF</td><td class="font-semibold text-rose-600">0.74</td><td>↑ resting HR, low SpO₂</td><td class="text-slate-500">Epic</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded" data-pull="maria-alvarez">Open chart</button></td></tr>
+                <tr><td class="py-2 font-medium">James Okafor</td><td>COPD</td><td class="font-semibold text-amber-600">0.62</td><td>↓ steps, ↑ resting HR</td><td class="text-slate-500">eCW</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded" data-pull="james-okafor">Open chart</button></td></tr>
+                <tr><td class="py-2 font-medium">Linh Tran</td><td>Pneumonia</td><td class="font-semibold text-amber-600">0.58</td><td>fever spikes, low SpO₂</td><td class="text-slate-500">Athena</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded" data-pull="linh-tran">Open chart</button></td></tr>
+                <tr><td class="py-2 font-medium">Robert Chen</td><td>Diabetes</td><td class="font-semibold text-emerald-600">0.22</td><td>A1c 7.8 → 7.1</td><td class="text-slate-500">Cerner</td><td class="text-right"><button class="btn-outline text-xs px-2 py-1 rounded" data-pull="robert-chen">Open chart</button></td></tr>
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- ============ PATIENT DETAIL (provider) ============ -->
+      <section data-panel="patientdetail" class="hidden">
+        <button onclick="goTab('overview')" class="text-sm text-violet-600 hover:underline mb-3">← Back to overview</button>
+
+        <!-- Clinical patient header -->
+        <div class="card p-5 mb-5">
+          <div class="flex flex-wrap items-center gap-4">
+            <div id="pdAvatar" class="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-lg">ET</div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span id="pdName" class="text-xl font-semibold text-slate-900">Elizabeth Trader</span>
+                <span id="pdCondition" class="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">CHF · NYHA II</span>
+                <span class="text-xs px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full">High risk</span>
+              </div>
+              <div id="pdMeta" class="text-sm text-slate-500 mt-0.5">F · 64 yo · DOB 1962-03-14 · MRN VC-44218 · PCP Dr. Patel · Last visit 2026-04-22</div>
+              <div class="text-xs text-slate-500 mt-1">Source: <span id="pdSource">Epic · MyChart</span> · Pulled just now via FHIR R4</div>
+            </div>
+            <div class="ml-auto flex gap-2">
+              <button class="btn-outline px-3 py-2 rounded-lg text-sm">📥 Export PDF</button>
+              <button class="btn-outline px-3 py-2 rounded-lg text-sm">🗓 Schedule visit</button>
+              <button class="btn-outline px-3 py-2 rounded-lg text-sm">📨 Message patient</button>
+              <button class="btn-primary px-3 py-2 rounded-lg text-sm">📝 Add note → Epic</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active problems / meds / allergies -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+          <div class="card p-4">
+            <div class="font-semibold text-slate-900 mb-2 text-sm">Active problems</div>
+            <ul class="text-sm space-y-1.5">
+              <li>• Heart failure, systolic <span class="text-xs text-slate-500">I50.32</span></li>
+              <li>• Essential hypertension <span class="text-xs text-slate-500">I10</span></li>
+              <li>• Type 2 diabetes <span class="text-xs text-slate-500">E11.9</span></li>
+              <li>• Hyperlipidemia <span class="text-xs text-slate-500">E78.5</span></li>
+              <li>• Obstructive sleep apnea <span class="text-xs text-slate-500">G47.33</span></li>
+            </ul>
+          </div>
+          <div class="card p-4">
+            <div class="font-semibold text-slate-900 mb-2 text-sm">Active medications</div>
+            <ul class="text-sm space-y-1.5">
+              <li>• Lisinopril 20 mg PO daily</li>
+              <li>• Furosemide 40 mg PO BID</li>
+              <li>• Carvedilol 12.5 mg PO BID</li>
+              <li>• Metformin 1000 mg PO BID</li>
+              <li>• Atorvastatin 40 mg PO daily</li>
+            </ul>
+          </div>
+          <div class="card p-4">
+            <div class="font-semibold text-slate-900 mb-2 text-sm">Allergies &amp; alerts</div>
+            <ul class="text-sm space-y-1.5">
+              <li>⚠ Sulfa drugs · rash</li>
+              <li>⚠ NSAIDs · GI bleed history</li>
+              <li>● Latex · contact dermatitis</li>
+              <li class="text-slate-500">No known food allergies</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+          <div class="card p-4"><div class="text-xs text-slate-500">Resting HR (24h)</div><div class="text-2xl font-semibold mt-1">72 <span class="text-sm font-normal text-slate-500">bpm</span></div><div class="text-xs text-emerald-600 mt-1">▼ 4 vs 7-day</div></div>
+          <div class="card p-4"><div class="text-xs text-slate-500">SpO₂ (overnight)</div><div class="text-2xl font-semibold mt-1">94%</div><div class="text-xs text-amber-600 mt-1">3 dips below 90%</div></div>
+          <div class="card p-4"><div class="text-xs text-slate-500">Steps (today)</div><div class="text-2xl font-semibold mt-1">4,212</div><div class="text-xs text-slate-500 mt-1">Goal 5,000</div></div>
+          <div class="card p-4"><div class="text-xs text-slate-500">Sleep</div><div class="text-2xl font-semibold mt-1">6h 18m</div><div class="text-xs text-rose-600 mt-1">Eff 78%</div></div>
+          <div class="card p-4"><div class="text-xs text-slate-500">Weight Δ 7d</div><div class="text-2xl font-semibold mt-1">+1.4 <span class="text-sm font-normal text-slate-500">kg</span></div><div class="text-xs text-rose-600 mt-1">Fluid retention flag</div></div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+          <div class="card p-5 lg:col-span-2">
+            <div class="font-semibold text-slate-900">Heart rate · 24-hour</div>
+            <div class="text-xs text-slate-500 mb-3">Continuous · Fitbit + Apple Health (merged)</div>
+            <canvas id="pdHrChart" height="120"></canvas>
+          </div>
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900">Sleep stages · last night</div>
+            <div class="text-xs text-slate-500 mb-3">Apple Health</div>
+            <canvas id="pdSleepChart" height="180"></canvas>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900">SpO₂ overnight</div>
+            <div class="text-xs text-slate-500 mb-3">Fitbit Charge 6 · 8h window</div>
+            <canvas id="pdSpo2Chart" height="160"></canvas>
+          </div>
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900">Steps · 14d</div>
+            <div class="text-xs text-slate-500 mb-3">Apple Health · merged</div>
+            <canvas id="pdStepsChart" height="160"></canvas>
+          </div>
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900">Weight + BP · trend</div>
+            <div class="text-xs text-slate-500 mb-3">Samsung Health · scale + cuff</div>
+            <canvas id="pdWeightChart" height="160"></canvas>
+          </div>
+        </div>
+
+        <!-- Clinical AI insights & care actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+          <div class="card p-5 lg:col-span-2" style="background:linear-gradient(180deg,#faf5ff 0%,#ffffff 60%);">
+            <div class="flex items-center gap-2 mb-2"><span class="text-violet-600">✨</span><div class="font-semibold text-slate-900">Clinical AI summary</div></div>
+            <ul class="space-y-2 text-sm text-slate-700">
+              <li>● <b>Possible early CHF decompensation</b>: weight up 1.4 kg over 7 days, reduced step count, elevated resting HR — pattern matches prior 2025-11 admission precursor.</li>
+              <li>● <b>Nocturnal hypoxia</b>: 3 SpO₂ dips below 90% in last 7 nights. OSA dx on file — CPAP adherence 62% per Samsung Health.</li>
+              <li>● <b>Adherence</b>: ACE-i + diuretic refills on schedule (Surescripts).</li>
+              <li>● <b>Patient-reported</b>: mild ankle swelling logged via app on May 7.</li>
+              <li>● <b>Risk score</b>: 30-day readmission 0.81 (CHF cohort) · GV-RiskNet v2.4.</li>
+            </ul>
+          </div>
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900 mb-1">Care actions</div>
+            <div class="text-xs text-slate-500 mb-3">Logged in chart · pushed to Epic</div>
+            <div class="space-y-2 text-sm">
+              <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">📝 Add clinical note</button>
+              <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">💊 e-Prescribe (Surescripts)</button>
+              <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">🧪 Order labs (BNP, BMP)</button>
+              <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">📨 Refer to cardiology</button>
+              <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">📅 Schedule tele-visit</button>
+            </div>
+            <div class="mt-3 text-xs text-slate-500">Audit trail enabled · all actions HL7-logged</div>
+          </div>
+        </div>
+
+        <!-- Recent encounters / notes -->
+        <div class="card overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="font-semibold text-slate-900">Recent encounters &amp; results</div>
+            <div class="text-xs text-slate-500">Cross-source · last 90 days</div>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
+              <tr><th class="text-left px-5 py-2">Date</th><th class="text-left px-5 py-2">Type</th><th class="text-left px-5 py-2">Provider</th><th class="text-left px-5 py-2">Source</th><th class="text-left px-5 py-2">Summary</th><th></th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="px-5 py-2">2026-05-07</td><td class="px-5 py-2">Cardiology consult</td><td class="px-5 py-2">Dr. J. Kim</td><td class="px-5 py-2">Epic</td><td class="px-5 py-2 text-slate-500">EF 38% · increase carvedilol</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">Open</button></td></tr>
+              <tr><td class="px-5 py-2">2026-05-04</td><td class="px-5 py-2">Echo TTE</td><td class="px-5 py-2">Tech: B. Liu</td><td class="px-5 py-2">Epic</td><td class="px-5 py-2 text-slate-500">LV systolic dysfn, mild MR</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">Open</button></td></tr>
+              <tr><td class="px-5 py-2">2026-04-22</td><td class="px-5 py-2">PCP visit</td><td class="px-5 py-2">Dr. R. Patel</td><td class="px-5 py-2">Epic</td><td class="px-5 py-2 text-slate-500">Med rec, weight discussion</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">Open</button></td></tr>
+              <tr><td class="px-5 py-2">2026-04-22</td><td class="px-5 py-2">Lab · BMP + BNP</td><td class="px-5 py-2">—</td><td class="px-5 py-2">Epic</td><td class="px-5 py-2 text-slate-500">Cr 1.1 · K 4.2 · BNP 412 ↑</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">Open</button></td></tr>
+              <tr><td class="px-5 py-2">2026-04-15</td><td class="px-5 py-2">Refill · Furosemide</td><td class="px-5 py-2">Dr. R. Patel</td><td class="px-5 py-2">Surescripts</td><td class="px-5 py-2 text-slate-500">90 days · Walgreens 4218</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">Open</button></td></tr>
+              <tr><td class="px-5 py-2">2026-03-18</td><td class="px-5 py-2">Imaging · CXR</td><td class="px-5 py-2">Dr. S. Mehta</td><td class="px-5 py-2">eCW</td><td class="px-5 py-2 text-slate-500">Mild pulm congestion</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">Open</button></td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -971,7 +1128,7 @@
       });
       roleEls.forEach(el => el.classList.toggle('hidden', el.dataset.role !== role));
       const u = role === 'patient'
-        ? { name:'Elizabeth I.', initials:'EI', grad:'from-violet-500 to-fuchsia-500' }
+        ? { name:'Elizabeth Trader', initials:'ET', grad:'from-violet-500 to-fuchsia-500' }
         : { name:'Dr. R. Patel', initials:'DR', grad:'from-emerald-500 to-teal-600' };
       const av = document.getElementById('userAvatar');
       av.textContent = u.initials;
@@ -1014,6 +1171,66 @@
       navigator.clipboard?.writeText(i.value);
       const o = e.target.textContent; e.target.textContent = 'Copied ✓';
       setTimeout(() => e.target.textContent = o, 1400);
+    }
+
+    // ===== Provider patient lookup =====
+    const fakePatients = [
+      { id:'elizabeth-trader', name:'Elizabeth Trader', initials:'ET', grad:'from-violet-500 to-fuchsia-500',  age:64, sex:'F', dob:'1962-03-14', mrn:'VC-44218', pcp:'Dr. Patel',  visit:'2026-04-22', source:'Epic · MyChart',     condition:'CHF · NYHA II',     riskTag:'High risk', cohort:'CHF' },
+      { id:'maria-alvarez',   name:'Maria Alvarez',    initials:'MA', grad:'from-rose-500 to-orange-500',     age:71, sex:'F', dob:'1955-07-09', mrn:'VC-39112', pcp:'Dr. Patel',  visit:'2026-04-29', source:'Epic',             condition:'CHF · NYHA III',    riskTag:'High risk', cohort:'CHF' },
+      { id:'james-okafor',    name:'James Okafor',     initials:'JO', grad:'from-sky-500 to-indigo-500',      age:68, sex:'M', dob:'1957-11-22', mrn:'VC-40872', pcp:'Dr. Patel',  visit:'2026-05-02', source:'eClinicalWorks',   condition:'COPD · GOLD III',   riskTag:'Med risk',  cohort:'COPD' },
+      { id:'linh-tran',       name:'Linh Tran',        initials:'LT', grad:'from-emerald-500 to-teal-500',    age:54, sex:'F', dob:'1972-02-18', mrn:'VC-51220', pcp:'Dr. Kim',    visit:'2026-05-06', source:'athenahealth',     condition:'Pneumonia · CAP',   riskTag:'Med risk',  cohort:'Pneumonia' },
+      { id:'robert-chen',     name:'Robert Chen',      initials:'RC', grad:'from-amber-500 to-yellow-500',    age:59, sex:'M', dob:'1966-09-04', mrn:'VC-48201', pcp:'Dr. Patel',  visit:'2026-04-12', source:'Oracle Health (Cerner)', condition:'T2 Diabetes', riskTag:'Low risk',  cohort:'Diabetes' }
+    ];
+    const lookupInput = document.getElementById('lookupInput');
+    const lookupResults = document.getElementById('lookupResults');
+    const lookupGo = document.getElementById('lookupGo');
+
+    function renderResults(q){
+      const matches = fakePatients.filter(p =>
+        !q || p.name.toLowerCase().includes(q.toLowerCase()) || p.mrn.toLowerCase().includes(q.toLowerCase()));
+      lookupResults.innerHTML = matches.map(p => `
+        <div class="lookup-result px-3 py-2 cursor-pointer flex items-center gap-3" data-id="${p.id}">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br ${p.grad} flex items-center justify-center text-white text-xs font-semibold">${p.initials}</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-slate-900 truncate">${p.name} <span class="text-xs text-slate-500 font-normal">· ${p.age} ${p.sex} · ${p.condition}</span></div>
+            <div class="text-xs text-slate-500 truncate">MRN ${p.mrn} · ${p.source}</div>
+          </div>
+          <span class="text-xs text-violet-600">Open →</span>
+        </div>`).join('') || '<div class="px-3 py-3 text-xs text-slate-500">No matches.</div>';
+      lookupResults.classList.remove('hidden');
+    }
+    if (lookupInput){
+      lookupInput.addEventListener('focus', () => renderResults(lookupInput.value));
+      lookupInput.addEventListener('input', () => renderResults(lookupInput.value));
+      lookupInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); const first = lookupResults.querySelector('.lookup-result'); if (first) openPatient(first.dataset.id); }
+        if (e.key === 'Escape') lookupResults.classList.add('hidden');
+      });
+      document.addEventListener('click', e => { if (!e.target.closest('#lookupInput,#lookupResults')) lookupResults.classList.add('hidden'); });
+      lookupResults.addEventListener('click', e => {
+        const row = e.target.closest('.lookup-result');
+        if (row) openPatient(row.dataset.id);
+      });
+      lookupGo.addEventListener('click', () => {
+        const q = lookupInput.value.trim();
+        const match = fakePatients.find(p => !q || p.name.toLowerCase().includes(q.toLowerCase()) || p.mrn.toLowerCase().includes(q.toLowerCase()));
+        if (match) openPatient(match.id);
+      });
+    }
+    document.querySelectorAll('[data-pull]').forEach(b => b.addEventListener('click', () => openPatient(b.dataset.pull)));
+
+    function openPatient(id){
+      const p = fakePatients.find(x => x.id === id) || fakePatients[0];
+      document.getElementById('pdName').textContent = p.name;
+      document.getElementById('pdCondition').textContent = p.condition;
+      document.getElementById('pdMeta').textContent = `${p.sex} · ${p.age} yo · DOB ${p.dob} · MRN ${p.mrn} · PCP ${p.pcp} · Last visit ${p.visit}`;
+      document.getElementById('pdSource').textContent = p.source;
+      const av = document.getElementById('pdAvatar');
+      av.textContent = p.initials;
+      av.className = `w-14 h-14 rounded-full bg-gradient-to-br ${p.grad} flex items-center justify-center text-white font-bold text-lg`;
+      lookupResults?.classList.add('hidden');
+      goTab('patientdetail');
+      window.scrollTo({ top:0, behavior:'smooth' });
     }
 
     // ===== Upload =====
@@ -1090,6 +1307,38 @@
       data:{ labels:['Observation','Encounter','MedicationRequest','Condition','Procedure','DiagnosticReport'],
              datasets:[{ data:[42,18,12,11,9,8], backgroundColor:['#7c3aed','#a855f7','#f59e0b','#dc2626','#0ea5e9','#10b981'], borderWidth:0 }]},
       options:{ plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10, font:{ size:10 } } } } }
+    });
+
+    // ===== Patient Detail charts (provider view) =====
+    const pdHr = document.getElementById('pdHrChart');
+    if (pdHr) new Chart(pdHr, { type:'line',
+      data:{ labels:hours, datasets:[{ data:noise(72,18), borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.10)', fill:true, tension:.35, borderWidth:2, pointRadius:0 }]},
+      options:{ scales:{ y:{ suggestedMin:50, suggestedMax:110 } } }
+    });
+    const pdSleep = document.getElementById('pdSleepChart');
+    if (pdSleep) new Chart(pdSleep, { type:'doughnut',
+      data:{ labels:['Deep','REM','Light','Awake'], datasets:[{ data:[78,62,182,16], backgroundColor:['#7c3aed','#a855f7','#c4b5fd','#f59e0b'], borderWidth:0 }]},
+      options:{ plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10 } } }, cutout:'62%' }
+    });
+    const pdSpo2 = document.getElementById('pdSpo2Chart');
+    if (pdSpo2) new Chart(pdSpo2, { type:'line',
+      data:{ labels:Array.from({length:32}, (_,i)=>`${i*15}m`), datasets:[{
+        data:Array.from({length:32}, (_,i) => 96 - (Math.sin(i/4)*1.5) - (i>14&&i<19?4:0) + (rng()-.5)*0.6),
+        borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.10)', fill:true, tension:.4, borderWidth:2, pointRadius:0 }]},
+      options:{ scales:{ y:{ suggestedMin:86, suggestedMax:100 } } }
+    });
+    const pdSteps = document.getElementById('pdStepsChart');
+    if (pdSteps) new Chart(pdSteps, { type:'bar',
+      data:{ labels:Array.from({length:14}, (_,i)=>`D${i+1}`), datasets:[{ data:[4800,5200,3900,6100,5500,4200,3100,2800,3900,4500,5100,4700,4400,4212], backgroundColor:'#10b981', borderRadius:6 }]},
+      options:{ scales:{ y:{ beginAtZero:true } } }
+    });
+    const pdW = document.getElementById('pdWeightChart');
+    if (pdW) new Chart(pdW, { type:'line',
+      data:{ labels:Array.from({length:14}, (_,i)=>`D${i+1}`), datasets:[
+        { label:'Weight kg', data:[72.1,72.0,72.3,72.4,72.6,72.8,73.0,73.2,73.4,73.5,73.6,73.4,73.5,73.5], borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,.08)', fill:true, tension:.3, borderWidth:2, pointRadius:0, yAxisID:'y' },
+        { label:'Sys BP',    data:[128,130,131,133,135,134,136,138,140,139,141,140,142,141], borderColor:'#0ea5e9', tension:.3, borderWidth:2, pointRadius:0, yAxisID:'y1' }
+      ]},
+      options:{ plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10 } } }, scales:{ y:{ position:'left' }, y1:{ position:'right', grid:{ display:false } } } }
     });
 
     // ===== Cohort models =====
