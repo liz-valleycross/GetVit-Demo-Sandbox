@@ -44,7 +44,8 @@
     .src-badge { display:inline-flex; gap:4px; align-items:center; font-size:11px; padding:3px 8px; border-radius:9999px; background:#f1f5f9; color:#475569; }
     .src-badge.live { background:#dcfce7; color:#15803d; }
     .modal-back { position:fixed; inset:0; background:rgba(15,23,42,.5); display:flex; align-items:center; justify-content:center; z-index:60; }
-    .modal-card { background:#fff; border-radius:16px; max-width:520px; width:92%; padding:28px; box-shadow:0 25px 50px -12px rgba(0,0,0,.25); }
+    .modal-back.hidden { display:none; }
+    .modal-card { background:#fff; border-radius:16px; max-width:520px; width:92%; padding:28px; box-shadow:0 25px 50px -12px rgba(0,0,0,.25); position:relative; }
     .step { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:13px; color:#94a3b8; }
     .step .dot { width:18px; height:18px; border-radius:9999px; border:2px solid #e2e8f0; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:10px; color:#94a3b8; }
     .step.active { color:#1f2937; }
@@ -1147,6 +1148,7 @@
   <!-- ===== NHANES Import Modal ===== -->
   <div id="importModal" class="modal-back hidden">
     <div class="modal-card">
+      <button id="importClose" aria-label="Close" class="absolute top-3 right-3 w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 text-lg">×</button>
       <div class="flex items-center gap-3 mb-3">
         <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-2xl">🛰</div>
         <div>
@@ -1590,6 +1592,14 @@
     document.getElementById('nhanesImportBtn')?.addEventListener('click', runImport);
     document.getElementById('nhanesImportBtn2')?.addEventListener('click', runImport);
     document.getElementById('nhanesResetBtn')?.addEventListener('click', resetImport);
+
+    // Modal escape hatches: X button, click backdrop, ESC key
+    function closeImportModal(){ importModal?.classList.add('hidden'); }
+    document.getElementById('importClose')?.addEventListener('click', closeImportModal);
+    importModal?.addEventListener('click', e => { if (e.target === importModal) closeImportModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImportModal(); });
+    // Force-hide on load in case the page was cached mid-import
+    closeImportModal();
   </script>
 </body>
 </html>
