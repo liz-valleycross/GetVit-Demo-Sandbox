@@ -79,54 +79,54 @@
       <!-- Patient sidebar -->
       <nav data-role="patient" class="p-3">
         <div class="side-section">Overview</div>
-        <a class="side-link active">▦ Dashboard</a>
-        <a class="side-link">♡ My Vitals</a>
-        <a class="side-link">⌚ Daily Movement</a>
+        <a class="side-link active" data-jump="overview">▦ Dashboard</a>
+        <a class="side-link" data-jump="overview" data-anchor="sec-vitals">♡ My Vitals</a>
+        <a class="side-link" data-jump="overview" data-anchor="sec-movement">⌚ Daily Movement</a>
 
         <div class="side-section">My Data</div>
-        <a class="side-link">📋 Medical Records</a>
-        <a class="side-link">🥗 Nutrition</a>
-        <a class="side-link">🏋 Workouts</a>
-        <a class="side-link">🌙 Sleep Tracking</a>
-        <a class="side-link">◎ Goals</a>
+        <a class="side-link" data-jump="mydata" data-anchor="sec-records">📋 Medical Records</a>
+        <a class="side-link" data-jump="mydata" data-anchor="sec-nutrition">🥗 Nutrition</a>
+        <a class="side-link" data-jump="mydata" data-anchor="sec-workouts">🏋 Workouts</a>
+        <a class="side-link" data-jump="mydata" data-anchor="sec-sleep">🌙 Sleep Tracking</a>
+        <a class="side-link" data-jump="mydata" data-anchor="sec-goals">◎ Goals</a>
 
         <div class="side-section">Engage</div>
-        <a class="side-link">💬 Ask a Coach <span class="badge-ai ml-auto">AI</span></a>
-        <a class="side-link">✨ Insights</a>
-        <a class="side-link">📑 Reports</a>
-        <a class="side-link">📈 Activity Trends</a>
-        <a class="side-link">🏆 Achievements <span class="badge-new ml-auto">New</span></a>
+        <a class="side-link" data-jump="engage" data-anchor="sec-coach">💬 Ask a Coach <span class="badge-ai ml-auto">AI</span></a>
+        <a class="side-link" data-jump="engage" data-anchor="sec-insights">✨ Insights</a>
+        <a class="side-link" data-jump="engage" data-anchor="sec-reports">📑 Reports</a>
+        <a class="side-link" data-jump="engage" data-anchor="sec-trends">📈 Activity Trends</a>
+        <a class="side-link" data-jump="engage" data-anchor="sec-ach">🏆 Achievements <span class="badge-new ml-auto">New</span></a>
 
         <div class="mt-8 pt-4 border-t border-slate-100 text-xs text-slate-500 px-3">
           <div class="truncate">eliztrader@outlook.com</div>
-          <a class="mt-2 inline-flex items-center gap-1 text-slate-500 hover:text-slate-800">↪ Sign Out</a>
+          <a class="mt-2 inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 cursor-pointer">↪ Sign Out</a>
         </div>
       </nav>
 
       <!-- Provider sidebar -->
       <nav data-role="provider" class="p-3 hidden">
         <div class="side-section">Clinic</div>
-        <a class="side-link active">▦ Overview</a>
-        <a class="side-link">🔍 Patient Lookup</a>
-        <a class="side-link">📋 My Panel</a>
-        <a class="side-link">🚨 Care Alerts</a>
+        <a class="side-link active" data-jump="overview">▦ Overview</a>
+        <a class="side-link" data-jump="overview" data-anchor="sec-lookup">🔍 Patient Lookup</a>
+        <a class="side-link" data-jump="overview" data-anchor="sec-panel">📋 My Panel</a>
+        <a class="side-link" data-jump="overview" data-anchor="sec-alerts">🚨 Care Alerts</a>
 
         <div class="side-section">Health Information Exchange</div>
         <a class="side-link" data-jump="hie">⇄ EHR Connections</a>
-        <a class="side-link">📨 Inbound Records</a>
-        <a class="side-link">📤 Outbound Orders</a>
-        <a class="side-link">🔐 Audit Log</a>
+        <a class="side-link" data-jump="hie" data-anchor="sec-inbound">📨 Inbound Records</a>
+        <a class="side-link" data-jump="hie" data-anchor="sec-outbound">📤 Outbound Orders</a>
+        <a class="side-link" data-jump="hie" data-anchor="sec-audit">🔐 Audit Log</a>
 
         <div class="side-section">Population Health</div>
         <a class="side-link" data-jump="models">📊 Risk Models</a>
-        <a class="side-link">CHF · Cohort</a>
-        <a class="side-link">COPD · Cohort</a>
-        <a class="side-link">Pneumonia · Cohort</a>
-        <a class="side-link">Diabetes · Cohort</a>
+        <a class="side-link" data-jump="models" data-cohort="CHF">CHF · Cohort</a>
+        <a class="side-link" data-jump="models" data-cohort="COPD">COPD · Cohort</a>
+        <a class="side-link" data-jump="models" data-cohort="Pneumonia">Pneumonia · Cohort</a>
+        <a class="side-link" data-jump="models" data-cohort="Diabetes">Diabetes · Cohort</a>
 
         <div class="mt-8 pt-4 border-t border-slate-100 text-xs text-slate-500 px-3">
           <div class="truncate">r.patel@valleycross.health</div>
-          <a class="mt-2 inline-flex items-center gap-1 text-slate-500 hover:text-slate-800">↪ Sign Out</a>
+          <a class="mt-2 inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 cursor-pointer">↪ Sign Out</a>
         </div>
       </nav>
     </aside>
@@ -155,7 +155,7 @@
           </div>
 
           <!-- 3 top cards -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+          <div id="sec-vitals" class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
             <!-- Vitals -->
             <div class="card p-5 hover-lift">
               <div class="flex items-start justify-between">
@@ -264,7 +264,7 @@
           </div>
 
           <!-- Charts row -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+          <div id="sec-movement" class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
             <div class="card p-5 lg:col-span-2">
               <div class="flex items-center justify-between mb-3">
                 <div>
@@ -349,7 +349,7 @@
             <div class="card p-4"><div class="text-xs text-slate-500">FHIR calls · 24h</div><div class="text-2xl font-semibold mt-1">186K</div><div class="text-xs text-emerald-600 mt-1">99.97% success</div></div>
           </div>
 
-          <div class="card p-5 mb-6">
+          <div id="sec-lookup" class="card p-5 mb-6">
             <div class="flex flex-wrap items-center gap-3">
               <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Patient lookup</span>
               <input type="text" placeholder="Search by name, MRN, DOB…" class="flex-1 min-w-[220px] px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200 outline-none" />
@@ -386,7 +386,20 @@
             </div>
           </div>
 
-          <div class="card p-5">
+          <div id="sec-panel" class="card p-5 mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <div class="font-semibold text-slate-900">My panel · today's snapshot</div>
+              <span class="text-xs text-slate-500">2,114 patients · 7 sources</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Encounters this week</div><div class="font-semibold text-lg">68</div></div>
+              <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Tele-visits</div><div class="font-semibold text-lg">22</div></div>
+              <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Open inbox</div><div class="font-semibold text-lg">9</div></div>
+              <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Refill requests</div><div class="font-semibold text-lg">14</div></div>
+            </div>
+          </div>
+
+          <div id="sec-alerts" class="card p-5">
             <div class="flex items-center justify-between mb-3">
               <div class="font-semibold text-slate-900">Today's care alerts</div>
               <span class="text-xs text-slate-500">Auto-generated from cross-source signals</span>
@@ -406,13 +419,14 @@
 
       <!-- ============ MY DATA (patient) ============ -->
       <section data-panel="mydata" class="hidden">
-        <h1 class="text-2xl font-semibold text-slate-900 mb-1">My health records</h1>
-        <p class="text-slate-500 mb-6">Connect your portals or upload documents — you control who sees what.</p>
+        <h1 class="text-2xl font-semibold text-slate-900 mb-1">My data</h1>
+        <p class="text-slate-500 mb-6">Records, nutrition, workouts, sleep and goals — all your inputs in one place.</p>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+        <!-- Records -->
+        <div id="sec-records" class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
           <div class="card p-6 lg:col-span-2">
-            <div class="font-semibold text-slate-900 mb-1">Upload a record</div>
-            <div class="text-xs text-slate-500 mb-4">PDF · CCD/C-CDA · FHIR Bundle · DICOM · image of a paper record</div>
+            <div class="font-semibold text-slate-900 mb-1">Medical records</div>
+            <div class="text-xs text-slate-500 mb-4">Upload a PDF / CCD / FHIR Bundle / DICOM / image of a paper record</div>
             <label for="fileInput" class="block border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-violet-400 hover:bg-violet-50/40 transition">
               <div class="text-3xl mb-2">📤</div>
               <div class="font-medium text-slate-900">Drop files here, or click to browse</div>
@@ -422,17 +436,18 @@
             <div id="uploadList" class="mt-4 space-y-2"></div>
           </div>
           <div class="card p-5" style="background:linear-gradient(180deg,#f5f3ff 0%,#eef2ff 100%);border:1px solid #ede9fe">
-            <div class="font-semibold text-slate-900 mb-1">Why upload?</div>
-            <ul class="text-sm text-slate-700 space-y-2 mt-3">
-              <li>✅ Bring records from clinics not on the network.</li>
-              <li>✅ Add paper records (immunizations, old labs).</li>
-              <li>✅ GetVit auto-extracts vitals, problems, meds.</li>
-              <li>✅ You decide which clinicians can see each record.</li>
-            </ul>
+            <div class="font-semibold text-slate-900 mb-1">This year</div>
+            <div class="grid grid-cols-2 gap-3 mt-3 text-sm">
+              <div><div class="text-xs text-slate-500">Records</div><div class="text-2xl font-semibold">42</div></div>
+              <div><div class="text-xs text-slate-500">Visits</div><div class="text-2xl font-semibold">8</div></div>
+              <div><div class="text-xs text-slate-500">Labs</div><div class="text-2xl font-semibold">14</div></div>
+              <div><div class="text-xs text-slate-500">Imaging</div><div class="text-2xl font-semibold">3</div></div>
+            </div>
+            <div class="mt-4 text-xs text-slate-500">Last record received: Cardiology consult · 2 days ago</div>
           </div>
         </div>
 
-        <div class="card overflow-hidden">
+        <div class="card overflow-hidden mb-8">
           <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <div class="font-semibold text-slate-900">My documents &amp; records</div>
             <div class="text-xs text-slate-500">Synced + uploaded</div>
@@ -446,27 +461,124 @@
               <tr><td class="px-5 py-2">2026-05-04</td><td class="px-5 py-2">Echo report.pdf</td><td class="px-5 py-2"><span class="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">You uploaded</span></td><td class="px-5 py-2">PDF</td><td class="px-5 py-2 text-slate-500">Dr. Patel</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">View</button></td></tr>
               <tr><td class="px-5 py-2">2026-04-22</td><td class="px-5 py-2">Lipid panel + BMP</td><td class="px-5 py-2">Healow · eCW</td><td class="px-5 py-2">Lab</td><td class="px-5 py-2 text-slate-500">— private —</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">View</button></td></tr>
               <tr><td class="px-5 py-2">2026-04-15</td><td class="px-5 py-2">Immunization record (paper scan)</td><td class="px-5 py-2"><span class="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">You uploaded</span></td><td class="px-5 py-2">Image</td><td class="px-5 py-2 text-slate-500">Care team (3)</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">View</button></td></tr>
+              <tr><td class="px-5 py-2">2026-04-02</td><td class="px-5 py-2">Discharge summary</td><td class="px-5 py-2">Apple Health Records</td><td class="px-5 py-2">CCD</td><td class="px-5 py-2 text-slate-500">Dr. Patel, Dr. Kim</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">View</button></td></tr>
+              <tr><td class="px-5 py-2">2026-03-18</td><td class="px-5 py-2">CXR · PA + lateral</td><td class="px-5 py-2">MyChart · Epic</td><td class="px-5 py-2">DICOM</td><td class="px-5 py-2 text-slate-500">Dr. Patel</td><td class="px-5 py-2 text-right"><button class="text-xs text-violet-600 hover:underline">View</button></td></tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Nutrition -->
+        <div id="sec-nutrition" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div><div class="font-semibold text-slate-900">Nutrition · today</div><div class="text-xs text-slate-500">Logged via app + MyFitnessPal · sodium tracking on for CHF</div></div>
+            <button class="btn-primary px-3 py-2 rounded-lg text-sm">+ Log meal</button>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Calories</div><div class="font-semibold text-lg">1,640<span class="text-xs text-slate-500"> / 1,800</span></div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Sodium</div><div class="font-semibold text-lg text-amber-700">2,140<span class="text-xs text-slate-500"> / 2,000 mg</span></div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Protein</div><div class="font-semibold text-lg">68 g</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Carbs</div><div class="font-semibold text-lg">182 g</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Water</div><div class="font-semibold text-lg">5 / 8 cups</div></div>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="text-xs text-slate-500 uppercase border-b border-slate-100"><tr><th class="text-left py-2">Time</th><th class="text-left">Meal</th><th class="text-left">Cal</th><th class="text-left">Sodium</th><th></th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="py-2">07:30</td><td>Oatmeal + blueberries + walnuts</td><td>340</td><td>120 mg</td><td class="text-right text-xs text-emerald-600">good</td></tr>
+              <tr><td class="py-2">12:15</td><td>Turkey sandwich + chips</td><td>620</td><td>1,180 mg</td><td class="text-right text-xs text-amber-600">high sodium</td></tr>
+              <tr><td class="py-2">15:00</td><td>Apple + almond butter</td><td>180</td><td>5 mg</td><td class="text-right text-xs text-emerald-600">good</td></tr>
+              <tr><td class="py-2">19:00</td><td>Salmon + roasted veg + rice</td><td>500</td><td>835 mg</td><td class="text-right text-xs text-emerald-600">good</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Workouts -->
+        <div id="sec-workouts" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div><div class="font-semibold text-slate-900">Workouts · last 14 days</div><div class="text-xs text-slate-500">Auto-imported from Fitbit + Apple Health</div></div>
+            <button class="btn-primary px-3 py-2 rounded-lg text-sm">+ Log a workout</button>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Sessions</div><div class="font-semibold text-lg">7</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Total minutes</div><div class="font-semibold text-lg">186</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Avg HR</div><div class="font-semibold text-lg">118 bpm</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Calories</div><div class="font-semibold text-lg">2,840</div></div>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="text-xs text-slate-500 uppercase border-b border-slate-100"><tr><th class="text-left py-2">Date</th><th class="text-left">Type</th><th class="text-left">Duration</th><th class="text-left">Avg HR</th><th class="text-left">Calories</th><th class="text-left">Source</th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="py-2">2026-05-08</td><td>Walking</td><td>32 min</td><td>108</td><td>180</td><td class="text-slate-500">Apple Health</td></tr>
+              <tr><td class="py-2">2026-05-06</td><td>Stationary bike</td><td>22 min</td><td>122</td><td>210</td><td class="text-slate-500">Fitbit</td></tr>
+              <tr><td class="py-2">2026-05-04</td><td>Yoga</td><td>40 min</td><td>92</td><td>140</td><td class="text-slate-500">Apple Health</td></tr>
+              <tr><td class="py-2">2026-05-02</td><td>Walking</td><td>28 min</td><td>110</td><td>165</td><td class="text-slate-500">Fitbit</td></tr>
+              <tr><td class="py-2">2026-04-29</td><td>Strength</td><td>35 min</td><td>128</td><td>250</td><td class="text-slate-500">Manual</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Sleep -->
+        <div id="sec-sleep" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div><div class="font-semibold text-slate-900">Sleep · 7-night summary</div><div class="text-xs text-slate-500">From Fitbit Charge 6 + Apple Watch</div></div>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Avg duration</div><div class="font-semibold text-lg">6h 18m</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Efficiency</div><div class="font-semibold text-lg text-amber-700">78%</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Avg HR (sleep)</div><div class="font-semibold text-lg">62 bpm</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">SpO₂ dips</div><div class="font-semibold text-lg text-rose-600">3 nights</div></div>
+          </div>
+          <canvas id="sleepWeekChart" height="110"></canvas>
+        </div>
+
+        <!-- Goals -->
+        <div id="sec-goals" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div><div class="font-semibold text-slate-900">My goals</div><div class="text-xs text-slate-500">Set with Dr. Patel · reviewed weekly</div></div>
+            <button class="btn-outline px-3 py-2 rounded-lg text-sm">+ New goal</button>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm"><span class="font-medium text-slate-900">Daily steps · 5,000</span><span class="text-slate-500">4,212 / 5,000 · 84%</span></div>
+              <div class="risk-bar mt-1"><span style="width:84%;background:#7c3aed"></span></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm"><span class="font-medium text-slate-900">Sodium &lt; 2,000 mg / day</span><span class="text-amber-600">2,140 mg today · over</span></div>
+              <div class="risk-bar mt-1"><span style="width:107%;background:#f59e0b"></span></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm"><span class="font-medium text-slate-900">Weight stable · ±1 kg</span><span class="text-rose-600">+1.4 kg this week</span></div>
+              <div class="risk-bar mt-1"><span style="width:100%;background:#dc2626"></span></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm"><span class="font-medium text-slate-900">Med adherence · ACE-i</span><span class="text-emerald-600">100%</span></div>
+              <div class="risk-bar mt-1"><span style="width:100%;background:#10b981"></span></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm"><span class="font-medium text-slate-900">Sleep · 7+ hours</span><span class="text-amber-600">6h 18m avg</span></div>
+              <div class="risk-bar mt-1"><span style="width:90%;background:#f59e0b"></span></div>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- ============ ENGAGE (patient) ============ -->
       <section data-panel="engage" class="hidden">
         <h1 class="text-2xl font-semibold text-slate-900 mb-1">Engage with your care</h1>
-        <p class="text-slate-500 mb-6">Coaching, insights and a shareable view for family or specialists.</p>
+        <p class="text-slate-500 mb-6">Coaching, insights, reports, trends and a shareable view.</p>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Coach -->
+        <div id="sec-coach" class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
           <div class="card p-5 lg:col-span-2" style="background:linear-gradient(180deg,#faf5ff 0%,#ffffff 60%);">
-            <div class="flex items-center gap-2 mb-2"><span class="text-violet-600">✨</span><div class="font-semibold text-slate-900">GetVit AI · daily insights</div></div>
-            <ul class="space-y-2 text-sm text-slate-700">
-              <li>● Weight up 1.4 kg over 7 days with reduced step count — early CHF decompensation pattern.</li>
-              <li>● 3 nocturnal SpO₂ dips below 90% in the last 7 nights. Pulmonology review recommended.</li>
-              <li>● Adherence to ACE-inhibitor refill on schedule (Epic MedReconcile).</li>
-            </ul>
+            <div class="flex items-center gap-2 mb-2"><span class="text-violet-600">✨</span><div class="font-semibold text-slate-900">Ask a Coach <span class="badge-ai">AI</span></div></div>
+            <div class="text-xs text-slate-500 mb-3">Trained on your records, vitals and goals · escalates to Dr. Patel when needed</div>
+            <div class="space-y-3 text-sm">
+              <div class="flex gap-3"><div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-semibold">EI</div><div class="bg-violet-50 rounded-2xl rounded-tl-md px-3 py-2">My ankles look puffy today, should I be worried?</div></div>
+              <div class="flex gap-3 flex-row-reverse"><div class="w-8 h-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-semibold">AI</div><div class="bg-white border border-slate-200 rounded-2xl rounded-tr-md px-3 py-2">Your weight is up 1.4 kg in 7 days, sodium was over goal yesterday, and your nighttime SpO₂ dipped 3 times this week. That cluster matches an early CHF decompensation pattern. <b>I've already messaged Dr. Patel</b> — please take your evening loop diuretic and reply to confirm.</div></div>
+              <div class="flex gap-3"><div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-semibold">EI</div><div class="bg-violet-50 rounded-2xl rounded-tl-md px-3 py-2">Took it. Should I cancel my walk?</div></div>
+              <div class="flex gap-3 flex-row-reverse"><div class="w-8 h-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-semibold">AI</div><div class="bg-white border border-slate-200 rounded-2xl rounded-tr-md px-3 py-2">Keep it short and gentle today — aim for 15 min, target HR &lt; 110. I'll watch your live HR.</div></div>
+            </div>
             <div class="mt-4 flex gap-2">
-              <button class="btn-primary px-3 py-2 rounded-lg text-sm">💬 Ask a Coach</button>
-              <button class="btn-outline px-3 py-2 rounded-lg text-sm">📑 Generate report</button>
+              <input class="flex-1 px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200" placeholder="Ask anything about your health…" />
+              <button class="btn-primary px-3 py-2 rounded-lg text-sm">Send</button>
             </div>
           </div>
           <div class="card p-5">
@@ -482,6 +594,90 @@
               <label class="flex items-center gap-2"><input type="checkbox" /> Medications</label>
             </div>
             <div class="mt-3 text-xs text-slate-500">Expires in 7 days · HIPAA-compliant viewer</div>
+            <div class="mt-4 pt-4 border-t border-slate-100">
+              <div class="text-xs text-slate-500 mb-2">Already shared with</div>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700">Dr. Patel · PCP</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700">Dr. Kim · Cardio</span>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">My daughter</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insights -->
+        <div id="sec-insights" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <div><div class="font-semibold text-slate-900">Insights</div><div class="text-xs text-slate-500">Personalized patterns from your last 30 days</div></div>
+            <span class="text-xs text-violet-600 cursor-pointer hover:underline">View all</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="border border-slate-200 rounded-xl p-4">
+              <div class="text-xs font-semibold text-amber-700 mb-1">⚠ FLUID TREND</div>
+              <div class="font-medium text-slate-900">Weight rises 0.2 kg / day after high-sodium meals</div>
+              <div class="text-xs text-slate-500 mt-1">Linked to 4 of last 7 days · suggested action: reduce sodium below 1,800 mg</div>
+            </div>
+            <div class="border border-slate-200 rounded-xl p-4">
+              <div class="text-xs font-semibold text-rose-700 mb-1">● SLEEP BREATHING</div>
+              <div class="font-medium text-slate-900">SpO₂ drops occur in the 02:30–04:00 window</div>
+              <div class="text-xs text-slate-500 mt-1">3 nights this week · suggest sleep study referral</div>
+            </div>
+            <div class="border border-slate-200 rounded-xl p-4">
+              <div class="text-xs font-semibold text-emerald-700 mb-1">✓ POSITIVE</div>
+              <div class="font-medium text-slate-900">Resting HR down 4 bpm vs 30-day baseline</div>
+              <div class="text-xs text-slate-500 mt-1">Likely from increased walking on Mon/Wed</div>
+            </div>
+            <div class="border border-slate-200 rounded-xl p-4">
+              <div class="text-xs font-semibold text-sky-700 mb-1">ⓘ ADHERENCE</div>
+              <div class="font-medium text-slate-900">All ACE-inhibitor doses on time the past 14 days</div>
+              <div class="text-xs text-slate-500 mt-1">Refill arrives Friday from Walgreens</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reports -->
+        <div id="sec-reports" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <div><div class="font-semibold text-slate-900">Reports</div><div class="text-xs text-slate-500">Auto-generated summaries you can send to any provider</div></div>
+            <button class="btn-primary px-3 py-2 rounded-lg text-sm">+ New report</button>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="text-xs text-slate-500 uppercase border-b border-slate-100"><tr><th class="text-left py-2">Date</th><th class="text-left">Title</th><th class="text-left">Period</th><th class="text-left">Sent to</th><th></th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="py-2">2026-05-07</td><td class="font-medium">CHF self-management summary</td><td>Apr 24 → May 07</td><td class="text-slate-500">Dr. Patel</td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Open PDF</button></td></tr>
+              <tr><td class="py-2">2026-05-01</td><td class="font-medium">Cardiology pre-visit packet</td><td>30-day vitals</td><td class="text-slate-500">Dr. Kim</td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Open PDF</button></td></tr>
+              <tr><td class="py-2">2026-04-22</td><td class="font-medium">Monthly health letter</td><td>Apr 2026</td><td class="text-slate-500">Family · 2</td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Open PDF</button></td></tr>
+              <tr><td class="py-2">2026-04-04</td><td class="font-medium">Sleep + SpO₂ trend report</td><td>14 nights</td><td class="text-slate-500">Dr. Patel</td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Open PDF</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Activity Trends -->
+        <div id="sec-trends" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div><div class="font-semibold text-slate-900">Activity trends · 30 days</div><div class="text-xs text-slate-500">Steps and active minutes from all sources</div></div>
+          </div>
+          <canvas id="trendChart" height="120"></canvas>
+          <div class="grid grid-cols-3 gap-3 mt-4 text-sm">
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Best day</div><div class="font-semibold">Apr 19 · 6,810 steps</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">Streak</div><div class="font-semibold">4-day move streak</div></div>
+            <div class="bg-slate-50 rounded-lg p-3"><div class="text-xs text-slate-500">vs prior 30d</div><div class="font-semibold text-emerald-600">+8.2% steps</div></div>
+          </div>
+        </div>
+
+        <!-- Achievements -->
+        <div id="sec-ach" class="card p-6 mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <div><div class="font-semibold text-slate-900">Achievements <span class="badge-new">New</span></div><div class="text-xs text-slate-500">Earned by hitting your goals</div></div>
+            <span class="text-xs text-slate-500">14 / 32 unlocked</span>
+          </div>
+          <div class="grid grid-cols-3 md:grid-cols-6 gap-3 text-center">
+            <div class="border border-slate-200 rounded-xl p-3"><div class="text-3xl">🏆</div><div class="text-xs font-medium mt-1">First sync</div><div class="text-[10px] text-slate-500">Apr 02</div></div>
+            <div class="border border-slate-200 rounded-xl p-3"><div class="text-3xl">🚶</div><div class="text-xs font-medium mt-1">10K weekly</div><div class="text-[10px] text-slate-500">Apr 14</div></div>
+            <div class="border border-slate-200 rounded-xl p-3"><div class="text-3xl">💊</div><div class="text-xs font-medium mt-1">7-day adherence</div><div class="text-[10px] text-slate-500">Apr 28</div></div>
+            <div class="border border-slate-200 rounded-xl p-3"><div class="text-3xl">😴</div><div class="text-xs font-medium mt-1">Sleep streak ×3</div><div class="text-[10px] text-slate-500">May 03</div></div>
+            <div class="border border-slate-200 rounded-xl p-3 opacity-40"><div class="text-3xl">🥗</div><div class="text-xs font-medium mt-1">Sodium hero</div><div class="text-[10px] text-slate-500">Locked</div></div>
+            <div class="border border-slate-200 rounded-xl p-3 opacity-40"><div class="text-3xl">🌟</div><div class="text-xs font-medium mt-1">30-day move</div><div class="text-[10px] text-slate-500">Locked</div></div>
           </div>
         </div>
       </section>
@@ -552,18 +748,203 @@
         </div>
       </section>
 
-      <!-- ============ ACCOUNT / HELP placeholders ============ -->
+      <!-- ============ ACCOUNT ============ -->
       <section data-panel="account" class="hidden">
         <h1 class="text-2xl font-semibold text-slate-900 mb-1">Account</h1>
-        <p class="text-slate-500 mb-6">Profile, security, sharing &amp; billing.</p>
-        <div class="card p-6 text-sm text-slate-600">Account settings UI lives here in the prototype.</div>
+        <p class="text-slate-500 mb-6">Profile, security, sharing, devices &amp; billing.</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+          <div class="card p-6 lg:col-span-2">
+            <div class="flex items-center gap-4 mb-5">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-xl">EI</div>
+              <div>
+                <div class="text-lg font-semibold text-slate-900" data-role="patient">Elizabeth Ibarra</div>
+                <div class="text-lg font-semibold text-slate-900 hidden" data-role="provider">Dr. Rohan Patel</div>
+                <div class="text-sm text-slate-500" data-role="patient">Patient · MRN VC-44218 · DOB 1962-03-14</div>
+                <div class="text-sm text-slate-500 hidden" data-role="provider">Internal Medicine · Valley Cross Health · NPI 1184729302</div>
+              </div>
+              <button class="ml-auto btn-outline px-3 py-2 rounded-lg text-sm">Edit profile</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div><div class="text-xs text-slate-500">Email</div><div class="font-medium" data-role="patient">eliztrader@outlook.com</div><div class="font-medium hidden" data-role="provider">r.patel@valleycross.health</div></div>
+              <div><div class="text-xs text-slate-500">Phone</div><div class="font-medium">(415) 555-0144</div></div>
+              <div><div class="text-xs text-slate-500">Address</div><div class="font-medium">2841 Polk St, San Francisco CA</div></div>
+              <div><div class="text-xs text-slate-500">Primary care</div><div class="font-medium" data-role="patient">Dr. R. Patel · Valley Cross</div><div class="font-medium hidden" data-role="provider">Panel size: 2,114</div></div>
+              <div><div class="text-xs text-slate-500">Insurance</div><div class="font-medium" data-role="patient">BCBS PPO · Member 449281</div><div class="font-medium hidden" data-role="provider">Credentialed · 6 payers</div></div>
+              <div><div class="text-xs text-slate-500">Emergency contact</div><div class="font-medium">Marisol Ibarra · Daughter · (415) 555-0188</div></div>
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <div class="font-semibold text-slate-900 mb-1" data-role="patient">My plan</div>
+            <div class="font-semibold text-slate-900 mb-1 hidden" data-role="provider">Clinic plan</div>
+            <div class="text-xs text-slate-500 mb-4" data-role="patient">GetVit Plus · billed monthly</div>
+            <div class="text-xs text-slate-500 mb-4 hidden" data-role="provider">Enterprise · 24 seats</div>
+            <div class="flex items-end gap-2"><span class="text-3xl font-semibold text-violet-600">$12</span><span class="text-sm text-slate-500 mb-1" data-role="patient">/ month</span><span class="text-sm text-slate-500 mb-1 hidden" data-role="provider">/ provider / month</span></div>
+            <ul class="text-sm text-slate-700 space-y-2 mt-4">
+              <li>✓ Unlimited device connections</li>
+              <li>✓ AI Coach &amp; weekly reports</li>
+              <li>✓ HIPAA-grade record sharing</li>
+              <li class="hidden" data-role="provider">✓ FHIR R4 &amp; HL7 exchange</li>
+              <li class="hidden" data-role="provider">✓ Population risk models</li>
+            </ul>
+            <button class="mt-4 w-full btn-outline px-3 py-2 rounded-lg text-sm">Manage subscription</button>
+            <div class="text-xs text-slate-500 mt-3">Next charge: Jun 09 · Visa •••• 4218</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+          <div class="card p-6">
+            <div class="font-semibold text-slate-900 mb-1">Security</div>
+            <div class="text-xs text-slate-500 mb-4">Two-factor on, last password change 28 days ago</div>
+            <ul class="space-y-3 text-sm">
+              <li class="flex items-center justify-between"><span>Two-factor authentication</span><span class="text-emerald-600 text-xs">● Enabled · SMS</span></li>
+              <li class="flex items-center justify-between"><span>Biometric login (mobile)</span><span class="text-emerald-600 text-xs">● Face ID</span></li>
+              <li class="flex items-center justify-between"><span>Password</span><button class="text-xs text-violet-600 hover:underline">Change</button></li>
+              <li class="flex items-center justify-between"><span>Trusted devices</span><span class="text-slate-500 text-xs">3 active</span></li>
+              <li class="flex items-center justify-between"><span>Sessions</span><button class="text-xs text-violet-600 hover:underline">Sign out other devices</button></li>
+            </ul>
+          </div>
+
+          <div class="card p-6">
+            <div class="font-semibold text-slate-900 mb-1">Sharing &amp; consent</div>
+            <div class="text-xs text-slate-500 mb-4">Who can see your records — you can revoke any time</div>
+            <ul class="divide-y divide-slate-100 text-sm">
+              <li class="py-2 flex items-center justify-between"><div><div class="font-medium">Dr. R. Patel</div><div class="text-xs text-slate-500">PCP · Valley Cross · Full access</div></div><button class="text-xs text-rose-600 hover:underline">Revoke</button></li>
+              <li class="py-2 flex items-center justify-between"><div><div class="font-medium">Dr. J. Kim</div><div class="text-xs text-slate-500">Cardiology · Vitals + records</div></div><button class="text-xs text-rose-600 hover:underline">Revoke</button></li>
+              <li class="py-2 flex items-center justify-between"><div><div class="font-medium">Marisol Ibarra</div><div class="text-xs text-slate-500">Family · Read-only summary</div></div><button class="text-xs text-rose-600 hover:underline">Revoke</button></li>
+              <li class="py-2 flex items-center justify-between"><div><div class="font-medium">GetVit Research</div><div class="text-xs text-slate-500">Anonymized data only · opt-in</div></div><button class="text-xs text-rose-600 hover:underline">Opt out</button></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+          <div class="card p-6">
+            <div class="font-semibold text-slate-900 mb-1">Connected devices</div>
+            <div class="text-xs text-slate-500 mb-4">4 connected · Garmin needs reconnection</div>
+            <ul class="divide-y divide-slate-100 text-sm">
+              <li class="py-2 flex items-center justify-between"><div class="flex items-center gap-2"><span>⌚</span><div><div class="font-medium">Fitbit Charge 6</div><div class="text-xs text-slate-500">Last sync 2 min ago</div></div></div><span class="pulse-dot"></span></li>
+              <li class="py-2 flex items-center justify-between"><div class="flex items-center gap-2"><span>🍎</span><div><div class="font-medium">Apple Health</div><div class="text-xs text-slate-500">Last sync 14 min ago</div></div></div><span class="pulse-dot"></span></li>
+              <li class="py-2 flex items-center justify-between"><div class="flex items-center gap-2"><span>🏃</span><div><div class="font-medium">Garmin Venu 3</div><div class="text-xs text-slate-500">Token expired</div></div></div><button class="text-xs text-amber-700 hover:underline">Reconnect</button></li>
+              <li class="py-2 flex items-center justify-between"><div class="flex items-center gap-2"><span>📱</span><div><div class="font-medium">Samsung Health</div><div class="text-xs text-slate-500">Last sync 1 hr ago</div></div></div><span class="pulse-dot"></span></li>
+            </ul>
+          </div>
+
+          <div class="card p-6">
+            <div class="font-semibold text-slate-900 mb-1">Notifications</div>
+            <div class="text-xs text-slate-500 mb-4">Choose what we ping you about</div>
+            <ul class="space-y-3 text-sm">
+              <li class="flex items-center justify-between"><span>Care alerts (urgent)</span><label class="inline-flex items-center"><input type="checkbox" checked class="accent-violet-600 w-4 h-4" /></label></li>
+              <li class="flex items-center justify-between"><span>Daily insight digest</span><label class="inline-flex items-center"><input type="checkbox" checked class="accent-violet-600 w-4 h-4" /></label></li>
+              <li class="flex items-center justify-between"><span>Goal nudges</span><label class="inline-flex items-center"><input type="checkbox" checked class="accent-violet-600 w-4 h-4" /></label></li>
+              <li class="flex items-center justify-between"><span>Marketing &amp; product news</span><label class="inline-flex items-center"><input type="checkbox" class="accent-violet-600 w-4 h-4" /></label></li>
+              <li class="flex items-center justify-between"><span>SMS for refill reminders</span><label class="inline-flex items-center"><input type="checkbox" checked class="accent-violet-600 w-4 h-4" /></label></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <div class="font-semibold text-slate-900 mb-1">Billing history</div>
+          <div class="text-xs text-slate-500 mb-4">Receipts &amp; invoices — last 6 months</div>
+          <table class="w-full text-sm">
+            <thead class="text-xs text-slate-500 uppercase border-b border-slate-100"><tr><th class="text-left py-2">Date</th><th class="text-left">Description</th><th class="text-left">Amount</th><th class="text-left">Status</th><th></th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="py-2">2026-05-09</td><td>GetVit Plus · monthly</td><td>$12.00</td><td><span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Paid</span></td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Receipt</button></td></tr>
+              <tr><td class="py-2">2026-04-09</td><td>GetVit Plus · monthly</td><td>$12.00</td><td><span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Paid</span></td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Receipt</button></td></tr>
+              <tr><td class="py-2">2026-03-09</td><td>GetVit Plus · monthly</td><td>$12.00</td><td><span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Paid</span></td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Receipt</button></td></tr>
+              <tr><td class="py-2">2026-02-09</td><td>GetVit Plus · monthly</td><td>$12.00</td><td><span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Paid</span></td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Receipt</button></td></tr>
+              <tr><td class="py-2">2026-01-09</td><td>GetVit Plus · monthly</td><td>$12.00</td><td><span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Paid</span></td><td class="text-right"><button class="text-xs text-violet-600 hover:underline">Receipt</button></td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
+
+      <!-- ============ HELP ============ -->
       <section data-panel="help" class="hidden">
-        <h1 class="text-2xl font-semibold text-slate-900 mb-1">Help</h1>
-        <p class="text-slate-500 mb-6">FAQ, contact &amp; demo guide.</p>
-        <div class="card p-6 text-sm text-slate-600">
-          <p class="mb-2"><b>Switching roles in this demo:</b> use the <span class="role-pill align-middle"><button class="on">Patient</button><button>Provider</button></span> toggle in the top bar (right side).</p>
-          <p>Provider role unlocks the EHR / HIE and Population Models tabs in the top nav.</p>
+        <h1 class="text-2xl font-semibold text-slate-900 mb-1">Help &amp; support</h1>
+        <p class="text-slate-500 mb-6">Search the help center, browse FAQs, or talk to a human.</p>
+
+        <div class="card p-6 mb-6">
+          <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+            <input type="text" placeholder="Search articles · e.g. 'connect Fitbit'" class="flex-1 px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 outline-none text-sm" />
+            <button class="btn-primary px-4 py-3 rounded-lg text-sm">Search help center</button>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-3 text-xs">
+            <span class="text-slate-500">Popular:</span>
+            <span class="px-2 py-1 rounded-full bg-slate-100 cursor-pointer hover:bg-slate-200">Connect MyChart</span>
+            <span class="px-2 py-1 rounded-full bg-slate-100 cursor-pointer hover:bg-slate-200">Reconnect Garmin</span>
+            <span class="px-2 py-1 rounded-full bg-slate-100 cursor-pointer hover:bg-slate-200">Share with my doctor</span>
+            <span class="px-2 py-1 rounded-full bg-slate-100 cursor-pointer hover:bg-slate-200">Cancel subscription</span>
+            <span class="px-2 py-1 rounded-full bg-slate-100 cursor-pointer hover:bg-slate-200">Export my data</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="card p-5 hover-lift cursor-pointer">
+            <div class="text-2xl mb-2">🚀</div>
+            <div class="font-semibold text-slate-900">Getting started</div>
+            <div class="text-xs text-slate-500 mt-1">Connect your first device, import records, set goals.</div>
+            <div class="text-xs text-violet-600 mt-3">8 articles →</div>
+          </div>
+          <div class="card p-5 hover-lift cursor-pointer">
+            <div class="text-2xl mb-2">🔒</div>
+            <div class="font-semibold text-slate-900">Privacy &amp; security</div>
+            <div class="text-xs text-slate-500 mt-1">How your data is encrypted, who can see it, HIPAA basics.</div>
+            <div class="text-xs text-violet-600 mt-3">12 articles →</div>
+          </div>
+          <div class="card p-5 hover-lift cursor-pointer">
+            <div class="text-2xl mb-2">⚕</div>
+            <div class="font-semibold text-slate-900">For providers</div>
+            <div class="text-xs text-slate-500 mt-1">EHR setup, FHIR endpoints, population models.</div>
+            <div class="text-xs text-violet-600 mt-3">15 articles →</div>
+          </div>
+          <div class="card p-5 hover-lift cursor-pointer">
+            <div class="text-2xl mb-2">📱</div>
+            <div class="font-semibold text-slate-900">Devices &amp; sync</div>
+            <div class="text-xs text-slate-500 mt-1">Fitbit, Apple Health, Garmin, Samsung — troubleshooting.</div>
+            <div class="text-xs text-violet-600 mt-3">22 articles →</div>
+          </div>
+          <div class="card p-5 hover-lift cursor-pointer">
+            <div class="text-2xl mb-2">💳</div>
+            <div class="font-semibold text-slate-900">Billing</div>
+            <div class="text-xs text-slate-500 mt-1">Plans, invoices, refunds, taxes.</div>
+            <div class="text-xs text-violet-600 mt-3">9 articles →</div>
+          </div>
+          <div class="card p-5 hover-lift cursor-pointer">
+            <div class="text-2xl mb-2">🤖</div>
+            <div class="font-semibold text-slate-900">AI Coach</div>
+            <div class="text-xs text-slate-500 mt-1">What it can answer, how it escalates, limits.</div>
+            <div class="text-xs text-violet-600 mt-3">6 articles →</div>
+          </div>
+        </div>
+
+        <div class="card p-6 mb-6">
+          <div class="font-semibold text-slate-900 mb-3">Frequently asked</div>
+          <div class="divide-y divide-slate-100 text-sm">
+            <details class="py-3"><summary class="cursor-pointer font-medium text-slate-900">How do I connect my Fitbit?</summary><div class="text-slate-600 mt-2">Account → Connected devices → Add → Fitbit. Sign in to your Fitbit account and approve the read scopes. New data appears within ~2 minutes.</div></details>
+            <details class="py-3"><summary class="cursor-pointer font-medium text-slate-900">Who can see my health data?</summary><div class="text-slate-600 mt-2">Only you and providers you explicitly share with. The list lives in <b>Account → Sharing &amp; consent</b>. You can revoke anyone instantly.</div></details>
+            <details class="py-3"><summary class="cursor-pointer font-medium text-slate-900">Is GetVit HIPAA-compliant?</summary><div class="text-slate-600 mt-2">Yes — GetVit operates under a Business Associate Agreement, encrypts data at rest (AES-256) and in transit (TLS 1.3), and is HITRUST CSF + SOC 2 Type II certified.</div></details>
+            <details class="py-3"><summary class="cursor-pointer font-medium text-slate-900">How do I switch between Patient and Provider mode in this demo?</summary><div class="text-slate-600 mt-2">Use the small <b>Patient | Provider</b> pill in the top-right of the header. Provider mode unlocks EHR / HIE and Population Models tabs.</div></details>
+            <details class="py-3"><summary class="cursor-pointer font-medium text-slate-900">Can I export everything?</summary><div class="text-slate-600 mt-2">Yes. Account → Export gives you a ZIP with PDFs, raw FHIR Bundles, and CSVs of all wearable streams. Delivered within 1 hour.</div></details>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900 mb-1">💬 Chat with us</div>
+            <div class="text-xs text-slate-500 mb-3">Mon–Fri · 7 am – 7 pm PT · avg response 4 min</div>
+            <button class="btn-primary px-3 py-2 rounded-lg text-sm w-full">Start chat</button>
+          </div>
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900 mb-1">📞 Call support</div>
+            <div class="text-xs text-slate-500 mb-3">24/7 for urgent care issues</div>
+            <a class="block text-center btn-outline px-3 py-2 rounded-lg text-sm w-full">+1 (888) 555-VITT</a>
+          </div>
+          <div class="card p-5">
+            <div class="font-semibold text-slate-900 mb-1">✉ Email</div>
+            <div class="text-xs text-slate-500 mb-3">Replies within 1 business day</div>
+            <a class="block text-center btn-outline px-3 py-2 rounded-lg text-sm w-full">support@getvit.ai</a>
+          </div>
         </div>
       </section>
 
@@ -578,7 +959,7 @@
     // ===== Role + Tab switching =====
     const topTabs = document.querySelectorAll('#topTabs button');
     const panels  = document.querySelectorAll('section[data-panel]');
-    const roleEls = document.querySelectorAll('[data-role]');
+    const roleEls = document.querySelectorAll('main [data-role], aside [data-role]');
     let currentRole = 'patient';
 
     function setRole(role){
@@ -607,7 +988,24 @@
     }
     topTabs.forEach(b => b.addEventListener('click', () => goTab(b.dataset.tab)));
     document.querySelectorAll('#roleSwitch button').forEach(b => b.addEventListener('click', () => setRole(b.dataset.role)));
-    document.querySelectorAll('[data-jump]').forEach(b => b.addEventListener('click', () => goTab(b.dataset.jump)));
+    function activateSideLink(link){
+      const sb = link.closest('aside nav');
+      if (!sb) return;
+      sb.querySelectorAll('.side-link').forEach(x => x.classList.remove('active'));
+      link.classList.add('active');
+    }
+    document.querySelectorAll('.side-link[data-jump], .side-link[data-cohort]').forEach(a => {
+      a.addEventListener('click', () => {
+        if (a.dataset.jump) goTab(a.dataset.jump);
+        if (a.dataset.cohort) setCohort(a.dataset.cohort);
+        if (a.dataset.anchor) {
+          const el = document.getElementById(a.dataset.anchor);
+          if (el) setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+        }
+        activateSideLink(a);
+      });
+    });
+    document.querySelectorAll('[data-jump]:not(.side-link)').forEach(b => b.addEventListener('click', () => goTab(b.dataset.jump)));
     setRole('patient');
 
     // ===== Share copy =====
@@ -645,6 +1043,25 @@
     new Chart(document.getElementById('sleepChart'), { type:'doughnut',
       data:{ labels:['Deep','REM','Light','Awake'], datasets:[{ data:[78,62,182,16], backgroundColor:['#7c3aed','#a855f7','#c4b5fd','#f59e0b'], borderWidth:0 }]},
       options:{ plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10 } } }, cutout:'62%' }
+    });
+    const sleepWeekEl = document.getElementById('sleepWeekChart');
+    if (sleepWeekEl) new Chart(sleepWeekEl, { type:'bar',
+      data:{ labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets:[
+        { label:'Deep',  data:[68,72,55,80,62,90,78], backgroundColor:'#7c3aed', stack:'s' },
+        { label:'REM',   data:[55,60,52,68,58,72,62], backgroundColor:'#a855f7', stack:'s' },
+        { label:'Light', data:[195,178,182,210,170,205,182], backgroundColor:'#c4b5fd', stack:'s' },
+        { label:'Awake', data:[22,18,28,12,30,8,16], backgroundColor:'#f59e0b', stack:'s' }
+      ]},
+      options:{ plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10 } } }, scales:{ x:{ stacked:true }, y:{ stacked:true, title:{ display:true, text:'minutes' } } } }
+    });
+    const trendEl = document.getElementById('trendChart');
+    if (trendEl) new Chart(trendEl, { type:'line',
+      data:{ labels:Array.from({length:30}, (_,i)=> `${i+1}`),
+        datasets:[
+          { label:'Steps', data:Array.from({length:30}, () => 3000+Math.round(rng()*4000)), borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)', fill:true, tension:.3, borderWidth:2, pointRadius:0, yAxisID:'y' },
+          { label:'Active min', data:Array.from({length:30}, () => 15+Math.round(rng()*45)), borderColor:'#10b981', tension:.3, borderWidth:2, pointRadius:0, yAxisID:'y1' }
+        ]},
+      options:{ plugins:{ legend:{ display:true, position:'bottom', labels:{ boxWidth:10 } } }, scales:{ y:{ position:'left', title:{ display:true, text:'steps' } }, y1:{ position:'right', grid:{ display:false }, title:{ display:true, text:'min' } } } }
     });
 
     // Mini provider HIE chart
