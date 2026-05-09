@@ -38,22 +38,28 @@
       </div>
 
       <nav class="hidden md:flex items-center gap-1 ml-4" id="tabs">
-        <button data-tab="patient"   class="px-4 py-2 text-sm rounded-lg tab-active">Patient · Wearables</button>
-        <button data-tab="hie"       class="px-4 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">EHR / HIE</button>
-        <button data-tab="models"    class="px-4 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">Population Models</button>
+        <button data-tab="patient"  data-roles="patient,provider" class="px-4 py-2 text-sm rounded-lg tab-active" id="tabPatient">My Dashboard</button>
+        <button data-tab="records"  data-roles="patient"          class="px-4 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">My Records</button>
+        <button data-tab="hie"      data-roles="provider"         class="px-4 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100 hidden">EHR / HIE</button>
+        <button data-tab="models"   data-roles="provider"         class="px-4 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100 hidden">Population Models</button>
       </nav>
 
       <div class="ml-auto flex items-center gap-3">
-        <div class="relative hidden lg:block">
-          <input type="text" placeholder="Search patient, MRN, cohort…" class="pl-9 pr-3 py-2 text-sm rounded-lg bg-slate-100 border border-transparent focus:bg-white focus:border-slate-300 outline-none w-72" />
+        <!-- Role switcher (demo only) -->
+        <div class="flex items-center bg-slate-100 rounded-lg p-0.5 text-xs" id="roleSwitch">
+          <button data-role="patient"  class="px-3 py-1.5 rounded-md bg-white shadow-sm font-medium text-slate-900">Patient</button>
+          <button data-role="provider" class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800">Provider</button>
+        </div>
+        <div class="relative hidden lg:block" id="searchWrap">
+          <input type="text" id="searchInput" placeholder="Search my records…" class="pl-9 pr-3 py-2 text-sm rounded-lg bg-slate-100 border border-transparent focus:bg-white focus:border-slate-300 outline-none w-72" />
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
         </div>
         <button class="relative px-3 py-2 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">🔔<span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">3</span></button>
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-semibold">DR</div>
+          <div id="userAvatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">MA</div>
           <div class="hidden md:block text-sm leading-tight">
-            <div class="font-medium text-slate-900">Dr. R. Patel</div>
-            <div class="text-xs text-slate-500">Provider · Valley Cross Health</div>
+            <div id="userName" class="font-medium text-slate-900">Maria Alvarez</div>
+            <div id="userRole" class="text-xs text-slate-500">Patient · MRN VC-44218</div>
           </div>
         </div>
       </div>
@@ -66,6 +72,17 @@
     <!-- ============== TAB 1 · PATIENT VIEW ================ -->
     <!-- =================================================== -->
     <section data-panel="patient">
+      <!-- Provider-only patient lookup -->
+      <div data-role="provider" class="hidden bg-white rounded-xl ring-soft p-4 mb-4 flex flex-wrap items-center gap-3">
+        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Patient lookup</span>
+        <input type="text" placeholder="Search by name, MRN, DOB…" class="flex-1 min-w-[220px] px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200 focus:bg-white outline-none" />
+        <select class="px-3 py-2 text-sm rounded-lg bg-slate-50 border border-slate-200">
+          <option>All EHR sources</option><option>Epic</option><option>eClinicalWorks</option><option>Cerner</option><option>athenahealth</option>
+        </select>
+        <button class="px-3 py-2 text-sm rounded-lg bg-sky-600 text-white hover:bg-sky-700">Pull chart →</button>
+        <span class="text-xs text-slate-500">Showing: <span class="font-medium text-slate-700">Maria Alvarez</span> (synthetic)</span>
+      </div>
+
       <!-- Patient header -->
       <div class="flex flex-wrap items-center gap-4 mb-6">
         <div class="flex items-center gap-4">
@@ -77,8 +94,9 @@
         </div>
         <div class="ml-auto flex items-center gap-2">
           <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200 hover:bg-slate-50">📥 Export PDF</button>
-          <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200 hover:bg-slate-50">🗓 Schedule visit</button>
-          <button id="shareBtn" class="px-3 py-2 text-sm rounded-lg bg-sky-600 hover:bg-sky-700 text-white">🔗 Share dashboard</button>
+          <button data-role="provider" class="hidden px-3 py-2 text-sm rounded-lg bg-white border border-slate-200 hover:bg-slate-50">🗓 Schedule visit</button>
+          <button data-role="provider" class="hidden px-3 py-2 text-sm rounded-lg bg-white border border-slate-200 hover:bg-slate-50">📝 Add note</button>
+          <button id="shareBtn" data-role="patient" class="px-3 py-2 text-sm rounded-lg bg-sky-600 hover:bg-sky-700 text-white">🔗 Share dashboard</button>
         </div>
       </div>
 
@@ -199,9 +217,9 @@
             <li class="flex gap-2"><span class="text-sky-600">●</span> Patient-reported symptom: mild ankle swelling logged via app on May 7.</li>
           </ul>
         </div>
-        <div class="bg-white rounded-xl p-5 ring-soft">
+        <div data-role="patient" class="bg-white rounded-xl p-5 ring-soft">
           <div class="font-semibold text-slate-900 mb-1">Shareable view</div>
-          <div class="text-xs text-slate-500 mb-3">Patient can share a read-only snapshot with family or specialists.</div>
+          <div class="text-xs text-slate-500 mb-3">Share a read-only snapshot of your data with family or specialists.</div>
           <div class="flex items-center gap-2 mb-3">
             <input id="shareLink" readonly value="https://getvit.health/p/MA-44218?token=•••" class="flex-1 px-3 py-2 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono" />
             <button onclick="copyShare()" class="px-3 py-2 text-xs rounded-lg bg-slate-900 text-white hover:bg-slate-700">Copy</button>
@@ -213,6 +231,104 @@
           </div>
           <div class="mt-3 text-xs text-slate-500">Expires in 7 days · HIPAA-compliant viewer</div>
         </div>
+        <div data-role="provider" class="hidden bg-white rounded-xl p-5 ring-soft">
+          <div class="font-semibold text-slate-900 mb-1">Care actions</div>
+          <div class="text-xs text-slate-500 mb-3">Logged in chart · pushed to source EHR</div>
+          <div class="space-y-2 text-sm">
+            <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">📝 Add clinical note → Epic</button>
+            <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">💊 e-Prescribe (Surescripts)</button>
+            <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">🧪 Order labs</button>
+            <button class="w-full text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100">📨 Refer to cardiology</button>
+          </div>
+          <div class="mt-3 text-xs text-slate-500">Audit trail enabled · all actions HL7 logged</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================== -->
+    <!-- ============== PATIENT · MY RECORDS ================ -->
+    <!-- =================================================== -->
+    <section data-panel="records" class="hidden">
+      <div class="flex items-center gap-3 mb-6">
+        <div>
+          <div class="text-xl font-semibold text-slate-900">My health records</div>
+          <div class="text-sm text-slate-500">Connect your portals or upload documents — you control who sees what.</div>
+        </div>
+        <div class="ml-auto flex gap-2">
+          <button class="px-3 py-2 text-sm rounded-lg bg-white border border-slate-200">⚙ Privacy settings</button>
+          <button class="px-3 py-2 text-sm rounded-lg bg-sky-600 text-white hover:bg-sky-700">+ Connect a portal</button>
+        </div>
+      </div>
+
+      <!-- Upload + drag-drop -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <div class="lg:col-span-2 bg-white rounded-xl ring-soft p-6">
+          <div class="font-semibold text-slate-900 mb-1">Upload a record</div>
+          <div class="text-xs text-slate-500 mb-4">PDF · CCD/C-CDA · FHIR Bundle · DICOM · image of a paper record</div>
+          <label for="fileInput" class="block border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:border-sky-400 hover:bg-sky-50/40 transition">
+            <div class="text-3xl mb-2">📤</div>
+            <div class="font-medium text-slate-900">Drop files here, or click to browse</div>
+            <div class="text-xs text-slate-500 mt-1">Up to 25 MB · encrypted at rest · only you and clinicians you authorize can view</div>
+            <input id="fileInput" type="file" multiple class="hidden" />
+          </label>
+          <div id="uploadList" class="mt-4 space-y-2"></div>
+        </div>
+
+        <div class="bg-gradient-to-br from-sky-50 to-cyan-50 border border-sky-100 rounded-xl p-5">
+          <div class="font-semibold text-slate-900 mb-1">Why upload?</div>
+          <ul class="text-sm text-slate-700 space-y-2 mt-3">
+            <li>✅ Bring records from clinics that aren't on the network yet.</li>
+            <li>✅ Add paper records (allergy lists, immunizations, old labs).</li>
+            <li>✅ GetVit auto-extracts vitals, problems, and meds.</li>
+            <li>✅ You decide which clinicians can see each record.</li>
+          </ul>
+          <div class="mt-4 text-xs text-slate-500">Records you upload are <span class="font-medium text-slate-700">your</span> data — not part of the provider HIE feed unless you share them.</div>
+        </div>
+      </div>
+
+      <!-- Connect portal cards (patient-facing portals) -->
+      <div class="font-semibold text-slate-900 mb-3">Connect your patient portals</div>
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center font-bold text-rose-600 text-xs">My</div><div class="font-medium">MyChart (Epic)</div></div><span class="pulse-dot live"></span></div>
+          <div class="text-xs text-slate-500 mt-2">Connected · 4 hospitals</div>
+          <button class="mt-3 w-full text-xs px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200">Manage</button>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center font-bold text-violet-600 text-xs">eW</div><div class="font-medium">Healow (eCW)</div></div><span class="pulse-dot live"></span></div>
+          <div class="text-xs text-slate-500 mt-2">Connected · 1 clinic</div>
+          <button class="mt-3 w-full text-xs px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200">Manage</button>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center font-bold text-sky-600 text-xs">🍎</div><div class="font-medium">Apple Health Records</div></div><span class="pulse-dot live"></span></div>
+          <div class="text-xs text-slate-500 mt-2">Connected · iPhone</div>
+          <button class="mt-3 w-full text-xs px-2 py-1.5 rounded bg-slate-100 hover:bg-slate-200">Manage</button>
+        </div>
+        <div class="bg-white rounded-xl p-4 ring-soft hover-lift">
+          <div class="flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-xs">+</div><div class="font-medium">CommonHealth</div></div><span class="pulse-dot off"></span></div>
+          <div class="text-xs text-slate-500 mt-2">Not connected</div>
+          <button class="mt-3 w-full text-xs px-2 py-1.5 rounded bg-sky-600 text-white hover:bg-sky-700">Connect</button>
+        </div>
+      </div>
+
+      <!-- Records table -->
+      <div class="bg-white rounded-xl ring-soft overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="font-semibold text-slate-900">My documents &amp; records</div>
+          <div class="text-xs text-slate-500">Synced + uploaded</div>
+        </div>
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
+            <tr><th class="text-left px-5 py-2">Date</th><th class="text-left px-5 py-2">Document</th><th class="text-left px-5 py-2">Source</th><th class="text-left px-5 py-2">Type</th><th class="text-left px-5 py-2">Shared with</th><th class="text-left px-5 py-2"></th></tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-slate-50"><td class="px-5 py-2">2026-05-07</td><td class="px-5 py-2">Cardiology consult note</td><td class="px-5 py-2">MyChart · Epic</td><td class="px-5 py-2">CCD</td><td class="px-5 py-2 text-slate-500">Dr. Patel</td><td class="px-5 py-2 text-right"><button class="text-xs text-sky-600 hover:underline">View</button></td></tr>
+            <tr class="hover:bg-slate-50"><td class="px-5 py-2">2026-05-04</td><td class="px-5 py-2">Echo report.pdf</td><td class="px-5 py-2"><span class="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">You uploaded</span></td><td class="px-5 py-2">PDF</td><td class="px-5 py-2 text-slate-500">Dr. Patel</td><td class="px-5 py-2 text-right"><button class="text-xs text-sky-600 hover:underline">View</button></td></tr>
+            <tr class="hover:bg-slate-50"><td class="px-5 py-2">2026-04-22</td><td class="px-5 py-2">Lipid panel + BMP</td><td class="px-5 py-2">Healow · eCW</td><td class="px-5 py-2">Lab</td><td class="px-5 py-2 text-slate-500">— private —</td><td class="px-5 py-2 text-right"><button class="text-xs text-sky-600 hover:underline">View</button></td></tr>
+            <tr class="hover:bg-slate-50"><td class="px-5 py-2">2026-04-15</td><td class="px-5 py-2">Immunization record (paper scan)</td><td class="px-5 py-2"><span class="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">You uploaded</span></td><td class="px-5 py-2">Image</td><td class="px-5 py-2 text-slate-500">Care team (3)</td><td class="px-5 py-2 text-right"><button class="text-xs text-sky-600 hover:underline">View</button></td></tr>
+            <tr class="hover:bg-slate-50"><td class="px-5 py-2">2026-04-02</td><td class="px-5 py-2">Discharge summary</td><td class="px-5 py-2">Apple Health Records</td><td class="px-5 py-2">CCD</td><td class="px-5 py-2 text-slate-500">Dr. Patel, Dr. Kim</td><td class="px-5 py-2 text-right"><button class="text-xs text-sky-600 hover:underline">View</button></td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -485,14 +601,61 @@
   </footer>
 
   <script>
-    // ===== Tab switching =====
+    // ===== Role switching (Patient vs Provider) =====
     const tabs = document.querySelectorAll('#tabs button');
     const panels = document.querySelectorAll('section[data-panel]');
-    tabs.forEach(b => b.addEventListener('click', () => {
+    const roleEls = document.querySelectorAll('[data-role]');
+    let currentRole = 'patient';
+
+    function setRole(role){
+      currentRole = role;
+      // role switcher chip styling
+      document.querySelectorAll('#roleSwitch button').forEach(b => {
+        const on = b.dataset.role === role;
+        b.classList.toggle('bg-white', on);
+        b.classList.toggle('shadow-sm', on);
+        b.classList.toggle('font-medium', on);
+        b.classList.toggle('text-slate-900', on);
+        b.classList.toggle('text-slate-500', !on);
+      });
+      // tabs visible per role
+      tabs.forEach(t => {
+        const allowed = (t.dataset.roles || '').split(',').includes(role);
+        t.classList.toggle('hidden', !allowed);
+      });
+      // role-gated UI
+      roleEls.forEach(el => {
+        const allowed = el.dataset.role === role;
+        el.classList.toggle('hidden', !allowed);
+      });
+      // identity in top bar
+      const u = role === 'patient'
+        ? { name:'Maria Alvarez', sub:'Patient · MRN VC-44218', initials:'MA', grad:'from-indigo-500 to-purple-500' }
+        : { name:'Dr. R. Patel',  sub:'Provider · Valley Cross Health', initials:'DR', grad:'from-emerald-500 to-teal-600' };
+      document.getElementById('userName').textContent = u.name;
+      document.getElementById('userRole').textContent = u.sub;
+      const av = document.getElementById('userAvatar');
+      av.textContent = u.initials;
+      av.className = `w-8 h-8 rounded-full bg-gradient-to-br ${u.grad} flex items-center justify-center text-white text-sm font-semibold`;
+      // search placeholder
+      document.getElementById('searchInput').placeholder =
+        role === 'patient' ? 'Search my records…' : 'Search patient, MRN, cohort…';
+      // if currently active tab not allowed for new role, jump to first allowed
+      const active = document.querySelector('#tabs .tab-active');
+      if (!active || (active.dataset.roles || '').split(',').indexOf(role) === -1){
+        const first = Array.from(tabs).find(t => !t.classList.contains('hidden'));
+        if (first) activateTab(first);
+      }
+    }
+    function activateTab(b){
       tabs.forEach(x => { x.classList.remove('tab-active'); x.classList.add('text-slate-600','hover:bg-slate-100'); });
       b.classList.add('tab-active'); b.classList.remove('text-slate-600','hover:bg-slate-100');
       panels.forEach(p => p.classList.toggle('hidden', p.dataset.panel !== b.dataset.tab));
-    }));
+    }
+    tabs.forEach(b => b.addEventListener('click', () => activateTab(b)));
+    document.querySelectorAll('#roleSwitch button').forEach(b =>
+      b.addEventListener('click', () => setRole(b.dataset.role)));
+    setRole('patient');
 
     // ===== Share button =====
     function copyShare(){
@@ -502,8 +665,23 @@
       event.target.textContent = 'Copied ✓';
       setTimeout(() => event.target.textContent = o, 1400);
     }
-    document.getElementById('shareBtn').addEventListener('click', () => {
-      document.getElementById('shareLink').select();
+    const shareBtn = document.getElementById('shareBtn');
+    if (shareBtn) shareBtn.addEventListener('click', () => {
+      document.getElementById('shareLink')?.select();
+    });
+
+    // ===== File upload (My Records) =====
+    const fileInput = document.getElementById('fileInput');
+    const uploadList = document.getElementById('uploadList');
+    if (fileInput) fileInput.addEventListener('change', e => {
+      Array.from(e.target.files).forEach(f => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-3 bg-slate-50 rounded-lg px-3 py-2 text-sm';
+        row.innerHTML = `<span>📄</span><span class="flex-1 truncate">${f.name}</span>
+          <span class="text-xs text-slate-500">${(f.size/1024).toFixed(0)} KB</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">parsed ✓</span>`;
+        uploadList.appendChild(row);
+      });
     });
 
     // ===== Helpers =====
